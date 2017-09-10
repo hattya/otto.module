@@ -35,7 +35,6 @@ import (
 	"sync"
 
 	"github.com/robertkrimen/otto"
-	"github.com/robertkrimen/otto/parser"
 )
 
 var wrapper = [][]byte{
@@ -173,13 +172,7 @@ func (vm *Otto) binding(call otto.FunctionCall) otto.Value {
 }
 
 func (vm *Otto) throw(err error) otto.Value {
-	switch err := err.(type) {
-	case *otto.Error:
-		panic(err)
-	case parser.ErrorList:
-		panic(vm.MakeSyntaxError(fmt.Sprintf("%v:%v:%v: %v", err[0].Position.Filename, err[0].Position.Line, err[0].Position.Column, err[0].Message)))
-	}
-	panic(vm.MakeCustomError("Error", err.Error()))
+	return Throw(vm.Otto, err)
 }
 
 func (vm *Otto) toString(name string, v otto.Value) (string, error) {
