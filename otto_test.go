@@ -1,5 +1,5 @@
 //
-// otto.module :: otto.go
+// otto.module :: otto_test.go
 //
 //   Copyright (c) 2017 Akinori Hattori <hattya@gmail.com>
 //
@@ -24,44 +24,37 @@
 //   SOFTWARE.
 //
 
-package module
+package module_test
 
 import (
-	"fmt"
-	"strings"
+	"errors"
+	"testing"
 
-	"github.com/robertkrimen/otto"
-	"github.com/robertkrimen/otto/parser"
+	"github.com/hattya/otto.module"
 )
 
-func Throw(vm *otto.Otto, err error) otto.Value {
-	switch err := err.(type) {
-	case *otto.Error:
-		panic(err)
-	case parser.ErrorList:
-		panic(vm.MakeSyntaxError(OttoError{Err: err}.Error()))
+func TestOttoError(t *testing.T) {
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(err)
 	}
-	panic(vm.MakeCustomError("Error", err.Error()))
-}
 
-type OttoError struct {
-	Err error
-}
+	_, err1 := vm.Run(`throw new Error('error');`)
+	_, err2 := vm.Run(`-`)
+	_, err3 := vm.Run(`--;`)
+	err4 := errors.New("error")
 
-func (e OttoError) Error() string {
-	switch err := e.Err.(type) {
-	case *otto.Error:
-		return strings.TrimSpace(err.String())
-	case parser.ErrorList:
-		name := err[0].Position.Filename
-		if name == "" {
-			name = "<anonymous>"
+	for _, tt := range []struct {
+		err error
+		s   string
+	}{
+		{err1, "Error: error\n    at <anonymous>:1:11"},
+		{err2, "<anonymous>:1:2: Unexpected end of input"},
+		{err3, "<anonymous>:1:3: Unexpected token ; (and 1 more errors)"},
+		{err4, "error"},
+	} {
+		if g, e := (module.OttoError{Err: tt.err}).Error(), tt.s; g != e {
+			t.Errorf("OttoError.Error() = %q, expected %q", g, e)
 		}
-		s := fmt.Sprintf("%v:%v:%v: %v", name, err[0].Position.Line, err[0].Position.Column, err[0].Message)
-		if len(err) == 1 {
-			return s
-		}
-		return fmt.Sprintf("%v (and %v more errors)", s, len(err)-1)
 	}
-	return e.Err.Error()
 }

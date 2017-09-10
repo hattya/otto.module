@@ -88,7 +88,7 @@ var requireErrorTests = []struct {
 func TestRequireError(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(ottoError(err))
+		t.Fatal(module.OttoError{Err: err})
 	}
 
 	l := &loader{}
@@ -102,7 +102,7 @@ func TestRequireError(t *testing.T) {
 			t.Error("expected error")
 		}
 		if _, err := vm.Run(`delete require.cache['_'];`); err != nil {
-			t.Error(ottoError(err))
+			t.Error(module.OttoError{Err: err})
 		}
 	}
 }
@@ -119,7 +119,7 @@ var require_ExtensionsTests = []struct {
 func TestRequire_Extensions(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(ottoError(err))
+		t.Fatal(module.OttoError{Err: err})
 	}
 
 	tmpl := `(%q in require.extensions);`
@@ -129,7 +129,7 @@ func TestRequire_Extensions(t *testing.T) {
 		v, err := vm.Run(src)
 		switch {
 		case err != nil:
-			t.Error(ottoError(err))
+			t.Error(module.OttoError{Err: err})
 		case v != tt.v:
 			t.Errorf("%v = %v, expected %v", strings.Trim(src, ";"), v, tt.v)
 		}
@@ -139,7 +139,7 @@ func TestRequire_Extensions(t *testing.T) {
 func TestRequire_Resolve(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(ottoError(err))
+		t.Fatal(module.OttoError{Err: err})
 	}
 
 	src := `require.resolve('module.js');`
@@ -151,7 +151,7 @@ func TestRequire_Resolve(t *testing.T) {
 	restore()
 
 	if v, err := vm.Run(src); err != nil {
-		t.Error(ottoError(err))
+		t.Error(module.OttoError{Err: err})
 	} else {
 		s, _ := v.ToString()
 		if g, e := s, "module.js"; g != e {
@@ -163,7 +163,7 @@ func TestRequire_Resolve(t *testing.T) {
 func TestBindingError(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(ottoError(err))
+		t.Fatal(module.OttoError{Err: err})
 	}
 
 	vm.Bind("!", func(o *otto.Object) error {
@@ -191,7 +191,7 @@ var binding_VMErrorTests = []struct {
 func TestBinding_VMError(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(ottoError(err))
+		t.Fatal(module.OttoError{Err: err})
 	}
 
 	for _, tt := range binding_VMErrorTests {
@@ -206,7 +206,7 @@ func TestBinding_VMError(t *testing.T) {
 func TestThrow(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(ottoError(err))
+		t.Fatal(module.OttoError{Err: err})
 	}
 
 	func() {
@@ -267,11 +267,4 @@ func (l *loader) Resolve(id, _ string) (string, error) {
 		return "", errors.New(id)
 	}
 	return id, nil
-}
-
-func ottoError(err error) string {
-	if err, ok := err.(*otto.Error); ok {
-		return strings.TrimSpace(err.String())
-	}
-	return err.Error()
 }
