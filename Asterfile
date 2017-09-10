@@ -1,0 +1,70 @@
+var proj = os.getwd().split(/[/\\]+/).slice(-1);
+var title = 'Aster ☆ ' + proj;
+
+aster.title(title);
+
+// js
+aster.watch(/(^gen\.go|.+\.js)$/, function() {
+  go('generate', './...');
+});
+
+// go
+aster.watch(/.+\.go$/, function() {
+  if (go('get', '-t', '-v')) {
+    return;
+  }
+  if (go('vet')) {
+    return;
+  }
+  if (go('test', '-v', aster.arch === 'amd64' ? '-race' : '', '-covermode', 'atomic', '-coverprofile', 'cover.out')) {
+    return;
+  }
+  go.cover('-func', 'cover.out');
+  go.cover('-html', 'cover.out', '-o', 'coverage.html');
+  aster.title(title);
+});
+
+function go() {
+  var args = ['go'].concat(Array.prototype.slice.call(arguments));
+  var cmd = args[1] === 'get' ? 'bulid' : args[1];
+  var rv = system(args);
+  if (!rv) {
+    aster.notify('success', proj + ': ' + cmd, cmd + ' passed');
+  } else {
+    aster.notify('failure', proj + ': ' + cmd, cmd + ' failed');
+  }
+  return rv;
+}
+
+go.cover = function() {
+  return system(['go', 'tool', 'cover'].concat(Array.prototype.slice.call(arguments)));
+};
+
+// rst
+aster.watch(/.+\.rst$/, function(files) {
+  files.forEach(rst2html);
+});
+
+function rst2html(rst) {
+  var rst2html;
+  var ok = ['rst2html.py', 'rst2html'].some(function(s) {
+    rst2html = s;
+    return os.whence(rst2html);
+  });
+  if (!ok) {
+    return true;
+  }
+  var rv = system([rst2html, '--strict', rst, rst.slice(0, -4) + '.html']);
+  if (!rv) {
+    aster.notify('success', proj + ': rst2html', rst);
+  } else {
+    aster.notify('failure', proj + ': rst2html', rst + ' failed');
+  }
+  return rv;
+}
+
+// system
+function system(args) {
+  console.log('+ ' + args.join(' '));
+  return os.system(args);
+}
