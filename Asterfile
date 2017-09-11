@@ -4,7 +4,10 @@ var title = 'Aster ☆ ' + proj;
 aster.title(title);
 
 // js
-aster.watch(/(^gen\.go|.+\.js)$/, function() {
+aster.watch(/.+\.js$/, function() {
+  if (go('get', '-v', './...')) {
+    return;
+  }
   go('generate', './...');
 });
 
@@ -12,6 +15,11 @@ aster.watch(/(^gen\.go|.+\.js)$/, function() {
 aster.watch(/.+\.go$/, function(files) {
   if (go('get', '-t', '-v', './...')) {
     return;
+  }
+  if (files.some(function(e) { return e.replace(/\\/g, '/').lastIndexOf('cmd/modulizer', 0) === 0; })) {
+    if (go('generate', './...')) {
+      return;
+    }
   }
   if (go('vet', './...')) {
     return;

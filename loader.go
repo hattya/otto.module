@@ -95,20 +95,3 @@ func (e ModuleError) Error() string {
 	}
 	return fmt.Sprintf("cannot find module '%v'", e.ID)
 }
-
-type coreLoader struct {
-}
-
-func (*coreLoader) Load(id string) ([]byte, error) {
-	if b, ok := files[id]; ok {
-		return b, nil
-	}
-	return nil, ErrModule
-}
-
-func (*coreLoader) Resolve(id, _ string) (string, error) {
-	if _, ok := files[id]; ok {
-		return id, nil
-	}
-	return "", ErrModule
-}

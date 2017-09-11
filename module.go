@@ -24,7 +24,7 @@
 //   SOFTWARE.
 //
 
-//go:generate go run gen.go -o core.go lib
+//go:generate modulizer -l core -o core.go lib
 
 package module
 
