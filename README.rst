@@ -36,6 +36,8 @@ Usage
    		os.Exit(1)
    	}
 
+   	vm.Register(&module.FileLoader{})
+
    	vm.Run(`
    		var Module = require('module');
    	`)

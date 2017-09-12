@@ -29,6 +29,8 @@ package module
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -94,4 +96,57 @@ func (e ModuleError) Error() string {
 		return fmt.Sprintf("%v: %v", e.ID, e.Err)
 	}
 	return fmt.Sprintf("cannot find module '%v'", e.ID)
+}
+
+type FileLoader struct {
+}
+
+func (l *FileLoader) Load(id string) ([]byte, error) {
+	return ioutil.ReadFile(id)
+}
+
+func (l *FileLoader) Resolve(id, wd string) (string, error) {
+	if !isPath(id) {
+		return "", ErrModule
+	}
+
+	id = filepath.Join(wd, id)
+	fi, err := os.Stat(id)
+	if err != nil {
+		for _, ext := range []string{".js"} {
+			fi, err = os.Stat(id + ext)
+			if err == nil {
+				id += ext
+				break
+			}
+		}
+		if err != nil {
+			return "", ErrModule
+		}
+	}
+	if !fi.Mode().IsRegular() {
+		return "", ErrModule
+	}
+
+	id, err = filepath.EvalSymlinks(id)
+	if err != nil {
+		return "", err
+	}
+	return id, nil
+}
+
+func isPath(id string) bool {
+	switch {
+	case id == "":
+	case id[0] == '/':
+		return true
+	case id[0] == '.' && 1 < len(id):
+		switch {
+		case id[1] == '/':
+			return true
+		case id[1] == '.' && 2 < len(id):
+			return id[2] == '/'
+		}
+	}
+	return false
 }

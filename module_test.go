@@ -29,6 +29,7 @@ package module_test
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -62,6 +63,90 @@ func TestBootstrapError(t *testing.T) {
 			t.Error("expected error")
 		}
 		restore()
+	}
+}
+
+var requireTests = []struct {
+	id      string
+	imports []string
+}{
+	{
+		id:      "./testdata/file01",
+		imports: []string{"file01.js"},
+	},
+	{
+		id: "./testdata/file02",
+		imports: []string{
+			"file01.js",
+			"file02.js",
+		},
+	},
+}
+
+func TestRequire(t *testing.T) {
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(module.OttoError{Err: err})
+	}
+
+	vm.Register(&module.FileLoader{})
+	src := `
+		var imports = require(%q);
+		if (imports.join() !== %q) throw new Error(imports);
+	`
+
+	for _, tt := range requireTests {
+		_, err := vm.Run(fmt.Sprintf(src, tt.id, strings.Join(tt.imports, ",")))
+		if err != nil {
+			t.Errorf("require(%q) = %v", tt.id, err)
+		}
+	}
+}
+
+var requireFileTests = []struct {
+	id, err string
+}{
+	{"./testdata/file01.js", ""},
+	{"./testdata/file01", ""},
+	{"./testdata/file02.js", ""},
+	{"./testdata/file02", ""},
+	// syntax error
+	{"./testdata/error01.js", "SyntaxError"},
+	{"./testdata/error01", ""},
+	// require error
+	{"./testdata/error02.js", "Error"},
+	{"./testdata/error02", ""},
+	// only prefix
+	{"/", "Error"},
+	{"./", "Error"},
+	{"../", "Error"},
+	// nonexistent
+	{"/_", "Error"},
+	{"./_", "Error"},
+	{"../_", "Error"},
+	// folder
+	{"./.", "Error"},
+}
+
+func TestRequireFile(t *testing.T) {
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(module.OttoError{Err: err})
+	}
+
+	vm.Register(&module.FileLoader{})
+
+	for _, tt := range requireFileTests {
+		src := fmt.Sprintf(`require(%q);`, tt.id)
+		_, err := vm.Run(src)
+		switch {
+		case err != nil:
+			if tt.err == "" || !strings.HasPrefix(err.Error(), tt.err) {
+				t.Error(module.OttoError{Err: err})
+			}
+		case tt.err != "":
+			t.Errorf("%v: expected error", strings.Trim(src, ";"))
+		}
 	}
 }
 
@@ -136,26 +221,39 @@ func TestRequire_Extensions(t *testing.T) {
 	}
 }
 
+var require_ResolveTests = []struct {
+	id, name string
+}{
+	{"module.js", "module.js"},
+
+	{"./testdata/file01.js", abs("./testdata/file01.js")},
+	{"./testdata/file01", abs("./testdata/file01.js")},
+}
+
 func TestRequire_Resolve(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	src := `require.resolve('module.js');`
+	vm.Register(&module.FileLoader{})
+	tmpl := `require.resolve(%q);`
 
 	delete(module.Files, "module.js")
-	if _, err := vm.Run(src); err == nil {
+	if _, err := vm.Run(fmt.Sprintf(tmpl, "module.js")); err == nil {
 		t.Error("expected error")
 	}
 	restore()
 
-	if v, err := vm.Run(src); err != nil {
-		t.Error(module.OttoError{Err: err})
-	} else {
-		s, _ := v.ToString()
-		if g, e := s, "module.js"; g != e {
-			t.Errorf("%v = %q, expected %q", strings.Trim(src, ";"), g, e)
+	for _, tt := range require_ResolveTests {
+		src := fmt.Sprintf(tmpl, tt.id)
+		if v, err := vm.Run(src); err != nil {
+			t.Error(module.OttoError{Err: err})
+		} else {
+			s, _ := v.ToString()
+			if g, e := s, tt.name; g != e {
+				t.Errorf("%v = %q, expected %q", strings.Trim(src, ";"), g, e)
+			}
 		}
 	}
 }
@@ -248,6 +346,18 @@ func restore() {
 	for k, v := range files {
 		module.Files[k] = v
 	}
+}
+
+func abs(name string) string {
+	p, err := filepath.Abs(name)
+	if err != nil {
+		panic(err)
+	}
+	p, err = filepath.EvalSymlinks(p)
+	if err != nil {
+		panic(err)
+	}
+	return p
 }
 
 type loader struct {
