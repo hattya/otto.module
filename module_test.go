@@ -81,6 +81,19 @@ var requireTests = []struct {
 			"file02.js",
 		},
 	},
+	{
+		id:      "./testdata/file03",
+		imports: []string{"file03.json"},
+	},
+	{
+		id: "./testdata/file04",
+		imports: []string{
+			"file01.js",
+			"file02.js",
+			"file03.json",
+			"file04.js",
+		},
+	},
 }
 
 func TestRequire(t *testing.T) {
@@ -110,12 +123,18 @@ var requireFileTests = []struct {
 	{"./testdata/file01", ""},
 	{"./testdata/file02.js", ""},
 	{"./testdata/file02", ""},
+
+	{"./testdata/file03.json", ""},
+	{"./testdata/file03", ""},
 	// syntax error
 	{"./testdata/error01.js", "SyntaxError"},
 	{"./testdata/error01", ""},
 	// require error
 	{"./testdata/error02.js", "Error"},
 	{"./testdata/error02", ""},
+	// invalid JSON
+	{"./testdata/error03.json", "SyntaxError"},
+	{"./testdata/error03", ""},
 	// only prefix
 	{"/", "Error"},
 	{"./", "Error"},
@@ -197,6 +216,7 @@ var require_ExtensionsTests = []struct {
 	ext string
 }{
 	{otto.TrueValue(), ".js"},
+	{otto.TrueValue(), ".json"},
 
 	{otto.FalseValue(), ""},
 }
@@ -228,6 +248,9 @@ var require_ResolveTests = []struct {
 
 	{"./testdata/file01.js", abs("./testdata/file01.js")},
 	{"./testdata/file01", abs("./testdata/file01.js")},
+
+	{"./testdata/file03.json", abs("testdata/file03.json")},
+	{"./testdata/file03", abs("testdata/file03.json")},
 }
 
 func TestRequire_Resolve(t *testing.T) {
@@ -281,6 +304,9 @@ var binding_VMErrorTests = []struct {
 	args []string
 }{
 	{"compile", []string{`null`}},
+
+	{"load", []string{`null`}},
+	{"load", []string{`''`}},
 
 	{"resolve", []string{`null`}},
 	{"resolve", []string{`'_'`, `null`}},

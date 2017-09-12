@@ -113,7 +113,7 @@ func (l *FileLoader) Resolve(id, wd string) (string, error) {
 	id = filepath.Join(wd, id)
 	fi, err := os.Stat(id)
 	if err != nil {
-		for _, ext := range []string{".js"} {
+		for _, ext := range []string{".js", ".json"} {
 			fi, err = os.Stat(id + ext)
 			if err == nil {
 				id += ext

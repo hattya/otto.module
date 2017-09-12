@@ -77,6 +77,7 @@ func (vm *Otto) init() {
 	})
 	vm.Bind("vm", func(o *otto.Object) error {
 		o.Set("compile", vm.compile)
+		o.Set("load", vm.load)
 		o.Set("resolve", vm.resolve)
 		return nil
 	})
@@ -117,6 +118,20 @@ func (vm *Otto) compile(call otto.FunctionCall) otto.Value {
 		return vm.throw(err)
 	}
 	v, _ := vm.Run(script)
+	return v
+}
+
+func (vm *Otto) load(call otto.FunctionCall) otto.Value {
+	id, err := vm.toString("id", call.Argument(0))
+	if err != nil {
+		return vm.throw(err)
+	}
+	// load
+	b, err := vm.Load(id)
+	if err != nil {
+		return vm.throw(err)
+	}
+	v, _ := vm.ToValue(string(b))
 	return v
 }
 
