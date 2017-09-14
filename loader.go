@@ -155,7 +155,7 @@ func (l *FolderLoader) Resolve(id, wd string) (string, error) {
 	}
 
 	p := filepath.Join(wd, "package.json")
-	if b, err := ioutil.ReadFile(p); !os.IsNotExist(err) {
+	if b, err := ioutil.ReadFile(p); err == nil {
 		var pkg Package
 		if err := json.Unmarshal(b, &pkg); err != nil {
 			return "", PackageError{
@@ -203,4 +203,41 @@ func isPath(id string) bool {
 		}
 	}
 	return false
+}
+
+type NodeModulesLoader struct {
+	File   Loader
+	Folder Loader
+}
+
+func (l *NodeModulesLoader) Load(id string) ([]byte, error) {
+	return l.File.Load(id)
+}
+
+func (l *NodeModulesLoader) Resolve(id, wd string) (string, error) {
+	if isPath(id) {
+		return "", ErrModule
+	}
+
+	id = "./" + id
+	dir := wd
+	for {
+		if filepath.Base(dir) != "node_modules" {
+			dir = filepath.Join(dir, "node_modules")
+		}
+
+		if id, err := l.File.Resolve(id, dir); err == nil {
+			return id, nil
+		}
+		if id, err := l.Folder.Resolve(id, dir); err == nil {
+			return id, nil
+		}
+
+		dir = filepath.Dir(wd)
+		if dir == wd {
+			break
+		}
+		wd = dir
+	}
+	return "", ErrModule
 }

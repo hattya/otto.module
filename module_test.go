@@ -29,6 +29,7 @@ package module_test
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -95,6 +96,14 @@ var requireTests = []struct {
 		},
 	},
 	{
+		id: "./testdata/file05",
+		imports: []string{
+			"node_modules/file01.js",
+			"node_modules/folder01/index.js",
+			"file05.js",
+		},
+	},
+	{
 		id:      "./testdata/folder01",
 		imports: []string{"folder01/lib/file.js"},
 	},
@@ -144,6 +153,14 @@ var requireTests = []struct {
 			"folder09/lib/file.js",
 		},
 	},
+	{
+		id: "./testdata/folder10",
+		imports: []string{
+			"node_modules/file01.js",
+			"node_modules/folder01/index.js",
+			"folder10/index.js",
+		},
+	},
 }
 
 func TestRequire(t *testing.T) {
@@ -153,8 +170,13 @@ func TestRequire(t *testing.T) {
 	}
 
 	file := &module.FileLoader{}
+	folder := &module.FolderLoader{File: file}
 	vm.Register(file)
-	vm.Register(&module.FolderLoader{File: file})
+	vm.Register(folder)
+	vm.Register(&module.NodeModulesLoader{
+		File:   file,
+		Folder: folder,
+	})
 	src := `
 		var imports = require(%q);
 		if (imports.join() !== %q) throw new Error(imports);
@@ -197,6 +219,9 @@ var requireFileTests = []struct {
 	{"../_", "Error"},
 	// folder
 	{"./testdata/folder01", "Error"},
+	// node_modules
+	{"file01", "Error"},
+	{"folder01", "Error"},
 }
 
 func TestRequireFile(t *testing.T) {
@@ -247,6 +272,9 @@ var requireFolderTests = []struct {
 	{"../_", "Error"},
 	// file
 	{"./testdata/file01", "Error"},
+	// node_modules
+	{"file01", "Error"},
+	{"folder01", "Error"},
 }
 
 func TestRequireFolder(t *testing.T) {
@@ -258,6 +286,54 @@ func TestRequireFolder(t *testing.T) {
 	vm.Register(&module.FolderLoader{File: &module.FileLoader{}})
 
 	for _, tt := range requireFolderTests {
+		src := fmt.Sprintf(`require(%q);`, tt.id)
+		_, err := vm.Run(src)
+		switch {
+		case err != nil:
+			if tt.err == "" || !strings.HasPrefix(err.Error(), tt.err) {
+				t.Error(module.OttoError{Err: err})
+			}
+		case tt.err != "":
+			t.Errorf("%v: expected error", strings.Trim(src, ";"))
+		}
+	}
+}
+
+var requireNodeModulesTests = []struct {
+	id, err string
+}{
+	{"file01", ""},
+
+	{"folder01", ""},
+	// nonexistent
+	{"_", "Error"},
+	// file
+	{"./file01", "Error"},
+	// folder
+	{"./folder01", "Error"},
+}
+
+func TestRequireNodeModules(t *testing.T) {
+	popd, err := pushd("testdata")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer popd()
+
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(module.OttoError{Err: err})
+	}
+
+	file := &module.FileLoader{}
+	vm.Register(&module.NodeModulesLoader{
+		File: file,
+		Folder: &module.FolderLoader{
+			File: file,
+		},
+	})
+
+	for _, tt := range requireNodeModulesTests {
 		src := fmt.Sprintf(`require(%q);`, tt.id)
 		_, err := vm.Run(src)
 		switch {
@@ -348,32 +424,46 @@ var require_ResolveTests = []struct {
 }{
 	{"module.js", "module.js"},
 
-	{"./testdata/file01.js", abs("./testdata/file01.js")},
-	{"./testdata/file01", abs("./testdata/file01.js")},
+	{"./file01.js", abs("./testdata/file01.js")},
+	{"./file01", abs("./testdata/file01.js")},
 
-	{"./testdata/file03.json", abs("testdata/file03.json")},
-	{"./testdata/file03", abs("testdata/file03.json")},
+	{"./file03.json", abs("testdata/file03.json")},
+	{"./file03", abs("testdata/file03.json")},
 
-	{"./testdata/folder01", abs("testdata/folder01/lib/file.js")},
-	{"./testdata/folder02", abs("testdata/folder02/lib/index.js")},
-	{"./testdata/folder03", abs("testdata/folder03/index.js")},
-	{"./testdata/folder04", abs("testdata/folder04/index.js")},
+	{"./folder01", abs("testdata/folder01/lib/file.js")},
+	{"./folder02", abs("testdata/folder02/lib/index.js")},
+	{"./folder03", abs("testdata/folder03/index.js")},
+	{"./folder04", abs("testdata/folder04/index.js")},
 
-	{"./testdata/folder05", abs("testdata/folder05/lib/file.json")},
-	{"./testdata/folder06", abs("testdata/folder06/lib/index.json")},
-	{"./testdata/folder07", abs("testdata/folder07/index.json")},
-	{"./testdata/folder08", abs("testdata/folder08/index.json")},
+	{"./folder05", abs("testdata/folder05/lib/file.json")},
+	{"./folder06", abs("testdata/folder06/lib/index.json")},
+	{"./folder07", abs("testdata/folder07/index.json")},
+	{"./folder08", abs("testdata/folder08/index.json")},
+
+	{"file01", abs("testdata/node_modules/file01.js")},
+	{"folder01", abs("testdata/node_modules/folder01/index.js")},
 }
 
 func TestRequire_Resolve(t *testing.T) {
+	popd, err := pushd("testdata")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer popd()
+
 	vm, err := module.New()
 	if err != nil {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
 	file := &module.FileLoader{}
+	folder := &module.FolderLoader{File: file}
 	vm.Register(file)
-	vm.Register(&module.FolderLoader{File: file})
+	vm.Register(folder)
+	vm.Register(&module.NodeModulesLoader{
+		File:   file,
+		Folder: folder,
+	})
 	tmpl := `require.resolve(%q);`
 
 	delete(module.Files, "module.js")
@@ -498,6 +588,17 @@ func abs(name string) string {
 		panic(err)
 	}
 	return p
+}
+
+func pushd(path string) (func() error, error) {
+	wd, err := os.Getwd()
+	popd := func() error {
+		if err == nil {
+			return os.Chdir(wd)
+		}
+		return err
+	}
+	return popd, os.Chdir(path)
 }
 
 type loader struct {

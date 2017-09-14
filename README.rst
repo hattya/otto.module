@@ -37,8 +37,13 @@ Usage
    	}
 
    	file := &module.FileLoader{}
+   	folder := &module.FolderLoader{File: file}
    	vm.Register(file)
-   	vm.Register(&module.FolderLoader{File: file})
+   	vm.Register(folder)
+   	vm.Register(&module.NodeModulesLoader{
+   		File:   file,
+   		Folder: folder,
+   	})
 
    	vm.Run(`
    		var Module = require('module');
