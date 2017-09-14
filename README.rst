@@ -36,7 +36,9 @@ Usage
    		os.Exit(1)
    	}
 
-   	vm.Register(&module.FileLoader{})
+   	file := &module.FileLoader{}
+   	vm.Register(file)
+   	vm.Register(&module.FolderLoader{File: file})
 
    	vm.Run(`
    		var Module = require('module');

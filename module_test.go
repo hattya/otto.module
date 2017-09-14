@@ -94,6 +94,56 @@ var requireTests = []struct {
 			"file04.js",
 		},
 	},
+	{
+		id:      "./testdata/folder01",
+		imports: []string{"folder01/lib/file.js"},
+	},
+	{
+		id:      "./testdata/folder02",
+		imports: []string{"folder02/lib/index.js"},
+	},
+	{
+		id:      "./testdata/folder03",
+		imports: []string{"folder03/index.js"},
+	},
+	{
+		id:      "./testdata/folder04",
+		imports: []string{"folder04/index.js"},
+	},
+	{
+		id:      "./testdata/folder05",
+		imports: []string{"folder05/lib/file.json"},
+	},
+	{
+		id:      "./testdata/folder06",
+		imports: []string{"folder06/lib/index.json"},
+	},
+	{
+		id:      "./testdata/folder07",
+		imports: []string{"folder07/index.json"},
+	},
+	{
+		id:      "./testdata/folder08",
+		imports: []string{"folder08/index.json"},
+	},
+	{
+		id: "./testdata/folder09",
+		imports: []string{
+			"file01.js",
+			"file02.js",
+			"file03.json",
+			"file04.js",
+			"folder01/lib/file.js",
+			"folder02/lib/index.js",
+			"folder03/index.js",
+			"folder04/index.js",
+			"folder05/lib/file.json",
+			"folder06/lib/index.json",
+			"folder07/index.json",
+			"folder08/index.json",
+			"folder09/lib/file.js",
+		},
+	},
 }
 
 func TestRequire(t *testing.T) {
@@ -102,7 +152,9 @@ func TestRequire(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	vm.Register(&module.FileLoader{})
+	file := &module.FileLoader{}
+	vm.Register(file)
+	vm.Register(&module.FolderLoader{File: file})
 	src := `
 		var imports = require(%q);
 		if (imports.join() !== %q) throw new Error(imports);
@@ -144,7 +196,7 @@ var requireFileTests = []struct {
 	{"./_", "Error"},
 	{"../_", "Error"},
 	// folder
-	{"./.", "Error"},
+	{"./testdata/folder01", "Error"},
 }
 
 func TestRequireFile(t *testing.T) {
@@ -156,6 +208,56 @@ func TestRequireFile(t *testing.T) {
 	vm.Register(&module.FileLoader{})
 
 	for _, tt := range requireFileTests {
+		src := fmt.Sprintf(`require(%q);`, tt.id)
+		_, err := vm.Run(src)
+		switch {
+		case err != nil:
+			if tt.err == "" || !strings.HasPrefix(err.Error(), tt.err) {
+				t.Error(module.OttoError{Err: err})
+			}
+		case tt.err != "":
+			t.Errorf("%v: expected error", strings.Trim(src, ";"))
+		}
+	}
+}
+
+var requireFolderTests = []struct {
+	id, err string
+}{
+	{"./testdata/folder01", ""},
+	{"./testdata/folder02", ""},
+	{"./testdata/folder03", ""},
+	{"./testdata/folder04", ""},
+
+	{"./testdata/folder05", ""},
+	{"./testdata/folder06", ""},
+	{"./testdata/folder07", ""},
+	{"./testdata/folder08", ""},
+	// invalid package.json
+	{"./testdata/error04", "SyntaxError"},
+	// syntax error
+	{"./testdata/error05", "SyntaxError"},
+	// require error
+	{"./testdata/error06", "Error"},
+	// invalid JSON
+	{"./testdata/error07", "SyntaxError"},
+	// nonexistent
+	{"/_", "Error"},
+	{"./_", "Error"},
+	{"../_", "Error"},
+	// file
+	{"./testdata/file01", "Error"},
+}
+
+func TestRequireFolder(t *testing.T) {
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(module.OttoError{Err: err})
+	}
+
+	vm.Register(&module.FolderLoader{File: &module.FileLoader{}})
+
+	for _, tt := range requireFolderTests {
 		src := fmt.Sprintf(`require(%q);`, tt.id)
 		_, err := vm.Run(src)
 		switch {
@@ -251,6 +353,16 @@ var require_ResolveTests = []struct {
 
 	{"./testdata/file03.json", abs("testdata/file03.json")},
 	{"./testdata/file03", abs("testdata/file03.json")},
+
+	{"./testdata/folder01", abs("testdata/folder01/lib/file.js")},
+	{"./testdata/folder02", abs("testdata/folder02/lib/index.js")},
+	{"./testdata/folder03", abs("testdata/folder03/index.js")},
+	{"./testdata/folder04", abs("testdata/folder04/index.js")},
+
+	{"./testdata/folder05", abs("testdata/folder05/lib/file.json")},
+	{"./testdata/folder06", abs("testdata/folder06/lib/index.json")},
+	{"./testdata/folder07", abs("testdata/folder07/index.json")},
+	{"./testdata/folder08", abs("testdata/folder08/index.json")},
 }
 
 func TestRequire_Resolve(t *testing.T) {
@@ -259,7 +371,9 @@ func TestRequire_Resolve(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	vm.Register(&module.FileLoader{})
+	file := &module.FileLoader{}
+	vm.Register(file)
+	vm.Register(&module.FolderLoader{File: file})
 	tmpl := `require.resolve(%q);`
 
 	delete(module.Files, "module.js")

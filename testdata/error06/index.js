@@ -1,0 +1,2 @@
+// require error
+require('_');

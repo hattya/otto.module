@@ -27,6 +27,7 @@
 package module
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -133,6 +134,59 @@ func (l *FileLoader) Resolve(id, wd string) (string, error) {
 		return "", err
 	}
 	return id, nil
+}
+
+type FolderLoader struct {
+	File Loader
+}
+
+func (l *FolderLoader) Load(id string) ([]byte, error) {
+	return l.File.Load(id)
+}
+
+func (l *FolderLoader) Resolve(id, wd string) (string, error) {
+	if !isPath(id) {
+		return "", ErrModule
+	}
+
+	wd = filepath.Join(wd, id)
+	if fi, err := os.Stat(wd); err != nil || !fi.IsDir() {
+		return "", ErrModule
+	}
+
+	p := filepath.Join(wd, "package.json")
+	if b, err := ioutil.ReadFile(p); !os.IsNotExist(err) {
+		var pkg Package
+		if err := json.Unmarshal(b, &pkg); err != nil {
+			return "", PackageError{
+				Path: p,
+				Err:  err,
+			}
+		}
+		if pkg.Main != "" {
+			if id, err := l.File.Resolve(pkg.Main, wd); err == nil {
+				return id, nil
+			}
+			if id, err := l.File.Resolve(pkg.Main+"/index", wd); err == nil {
+				return id, nil
+			}
+		}
+	}
+	return l.File.Resolve("./index", wd)
+}
+
+type Package struct {
+	Name string `json:"name"`
+	Main string `json:"main"`
+}
+
+type PackageError struct {
+	Path string
+	Err  error
+}
+
+func (e PackageError) Error() string {
+	return fmt.Sprintf("%v: %v", e.Path, e.Err)
 }
 
 func isPath(id string) bool {

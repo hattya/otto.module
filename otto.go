@@ -40,6 +40,10 @@ func Throw(vm *otto.Otto, err error) otto.Value {
 		panic(err)
 	case parser.ErrorList:
 		panic(vm.MakeSyntaxError(OttoError{Err: err}.Error()))
+	case ModuleError:
+		if err, ok := err.Err.(PackageError); ok {
+			panic(vm.MakeSyntaxError(err.Error()))
+		}
 	}
 	panic(vm.MakeCustomError("Error", err.Error()))
 }
