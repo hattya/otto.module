@@ -9,11 +9,15 @@
   },
   "scripts": {
     "test": "nyc mocha --compilers js:babel-register",
-    "cover": "nyc --reporter=lcov npm test"
+    "cover": "nyc --reporter=lcov npm test",
+    "lint": "eslint lib test"
   },
   "devDependencies": {
     "babel-preset-env": "latest",
     "babel-register": "latest",
+    "eslint": "latest",
+    "eslint-config-airbnb-base": "latest",
+    "eslint-plugin-import": "latest",
     "mocha": "latest",
     "nyc": "latest",
     "power-assert": "latest"

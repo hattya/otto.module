@@ -7,6 +7,9 @@ aster.ignore.push(/^(coverage|node_modules)$/);
 
 // js
 aster.watch(/.+\.js$/, function(files) {
+  if (npm('run', 'lint')) {
+    return;
+  }
   if (npm('run', 'cover')) {
     return;
   }
