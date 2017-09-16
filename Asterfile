@@ -3,14 +3,32 @@ var title = 'Aster ☆ ' + proj;
 
 aster.title(title);
 aster.ignore.push(/^testdata$/);
+aster.ignore.push(/^(coverage|node_modules)$/);
 
 // js
-aster.watch(/.+\.js$/, function() {
-  if (go('get', '-v', './...')) {
+aster.watch(/.+\.js$/, function(files) {
+  if (npm('run', 'cover')) {
     return;
   }
-  go('generate', './...');
+  if (files.some(function(e) { return e.lastIndexOf('lib', 0) === 0; })) {
+    if (go('get', '-v', './...')) {
+      return;
+    }
+    go('generate', './...');
+  }
 });
+
+function npm() {
+  var args = ['npm'].concat(Array.prototype.slice.call(arguments));
+  var cmd = args.slice(1).join(' ');
+  var rv = system(args);
+  if (!rv) {
+    aster.notify('success', proj + ': npm', cmd + ' passed');
+  } else {
+    aster.notify('failure', proj + ': npm', cmd + ' failed');
+  }
+  return rv;
+}
 
 // go
 aster.watch(/.+\.go$/, function(files) {
@@ -124,9 +142,9 @@ function go() {
   var cmd = args[1] === 'get' ? 'bulid' : args[1];
   var rv = system(args);
   if (!rv) {
-    aster.notify('success', proj + ': ' + cmd, cmd + ' passed');
+    aster.notify('success', proj + ': go', cmd + ' passed');
   } else {
-    aster.notify('failure', proj + ': ' + cmd, cmd + ' failed');
+    aster.notify('failure', proj + ': go', cmd + ' failed');
   }
   return rv;
 }

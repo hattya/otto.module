@@ -1,0 +1,21 @@
+{
+  "name": "otto.module",
+  "version": "0.0.0",
+  "license": "MIT",
+  "author": "Akinori Hattori <hattya@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hattya/otto.module"
+  },
+  "scripts": {
+    "test": "nyc mocha --compilers js:babel-register",
+    "cover": "nyc --reporter=lcov npm test"
+  },
+  "devDependencies": {
+    "babel-preset-env": "latest",
+    "babel-register": "latest",
+    "mocha": "latest",
+    "nyc": "latest",
+    "power-assert": "latest"
+  }
+}

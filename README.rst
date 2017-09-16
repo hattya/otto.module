@@ -46,7 +46,9 @@ Usage
    	})
 
    	vm.Run(`
-   		var Module = require('module');
+   		var path = require('path');
+
+   		console.log(path.extname('module.go'));
    	`)
    }
 
