@@ -503,6 +503,62 @@ func TestBindingError(t *testing.T) {
 	}
 }
 
+var binding_VMLoadTests = []struct {
+	id string
+	ok bool
+}{
+	{"module.js", true},
+
+	{"./file01.js", true},
+	{"./file01", true},
+
+	{"./file03.json", true},
+	{"./file03", true},
+
+	{"./folder01", false},
+	{"./folder02", false},
+	{"./folder03", false},
+	{"./folder04", false},
+
+	{"./folder05", false},
+	{"./folder06", false},
+	{"./folder07", false},
+	{"./folder08", false},
+
+	{"file01", false},
+	{"folder01", false},
+	// nonexistent
+	{"./_", false},
+}
+
+func TestBinding_VMLoad(t *testing.T) {
+	popd, err := pushd("testdata")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer popd()
+
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(module.OttoError{Err: err})
+	}
+
+	vm.Register(&module.FileLoader{})
+
+	for _, tt := range binding_VMLoadTests {
+		src := fmt.Sprintf(`process.binding('vm').load(%q);`, tt.id)
+		_, err := vm.Run(src)
+		switch {
+		case err != nil:
+			if tt.ok {
+				t.Error(module.OttoError{Err: err})
+			}
+		case !tt.ok:
+			t.Errorf("%v: expected error", strings.Trim(src, ";"))
+		}
+	}
+}
+
 var binding_VMErrorTests = []struct {
 	fn   string
 	args []string

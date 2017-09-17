@@ -103,6 +103,16 @@ type FileLoader struct {
 }
 
 func (l *FileLoader) Load(id string) ([]byte, error) {
+	fi, err := os.Stat(id)
+	switch {
+	case err != nil:
+		id, err = l.Resolve(id, ".")
+	case !fi.Mode().IsRegular():
+		err = ErrModule
+	}
+	if err != nil {
+		return nil, err
+	}
 	return ioutil.ReadFile(id)
 }
 
