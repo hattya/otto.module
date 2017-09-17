@@ -227,7 +227,17 @@ type NodeModulesLoader struct {
 }
 
 func (l *NodeModulesLoader) Load(id string) ([]byte, error) {
-	return l.File.Load(id)
+	fi, err := os.Stat(id)
+	switch {
+	case err != nil:
+		id, err = l.Resolve(id, ".")
+	case fi.IsDir():
+		id, err = l.Folder.Resolve("./"+id, ".")
+	}
+	if err != nil {
+		return nil, err
+	}
+	return ioutil.ReadFile(id)
 }
 
 func (l *NodeModulesLoader) Resolve(id, wd string) (string, error) {

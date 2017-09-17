@@ -525,8 +525,8 @@ var binding_VMLoadTests = []struct {
 	{"./folder07", true},
 	{"./folder08", true},
 
-	{"file01", false},
-	{"folder01", false},
+	{"file01", true},
+	{"folder01", true},
 	// nonexistent
 	{"./_", false},
 }
@@ -544,8 +544,13 @@ func TestBinding_VMLoad(t *testing.T) {
 	}
 
 	file := &module.FileLoader{}
+	folder := &module.FolderLoader{File: file}
 	vm.Register(file)
-	vm.Register(&module.FolderLoader{File: file})
+	vm.Register(folder)
+	vm.Register(&module.NodeModulesLoader{
+		File:   file,
+		Folder: folder,
+	})
 
 	for _, tt := range binding_VMLoadTests {
 		src := fmt.Sprintf(`process.binding('vm').load(%q);`, tt.id)
