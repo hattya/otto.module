@@ -151,7 +151,13 @@ type FolderLoader struct {
 }
 
 func (l *FolderLoader) Load(id string) ([]byte, error) {
-	return l.File.Load(id)
+	if fi, err := os.Stat(id); err != nil || fi.IsDir() {
+		id, err = l.Resolve(id, ".")
+		if err != nil {
+			return nil, err
+		}
+	}
+	return ioutil.ReadFile(id)
 }
 
 func (l *FolderLoader) Resolve(id, wd string) (string, error) {

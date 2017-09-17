@@ -515,15 +515,15 @@ var binding_VMLoadTests = []struct {
 	{"./file03.json", true},
 	{"./file03", true},
 
-	{"./folder01", false},
-	{"./folder02", false},
-	{"./folder03", false},
-	{"./folder04", false},
+	{"./folder01", true},
+	{"./folder02", true},
+	{"./folder03", true},
+	{"./folder04", true},
 
-	{"./folder05", false},
-	{"./folder06", false},
-	{"./folder07", false},
-	{"./folder08", false},
+	{"./folder05", true},
+	{"./folder06", true},
+	{"./folder07", true},
+	{"./folder08", true},
 
 	{"file01", false},
 	{"folder01", false},
@@ -543,7 +543,9 @@ func TestBinding_VMLoad(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	vm.Register(&module.FileLoader{})
+	file := &module.FileLoader{}
+	vm.Register(file)
+	vm.Register(&module.FolderLoader{File: file})
 
 	for _, tt := range binding_VMLoadTests {
 		src := fmt.Sprintf(`process.binding('vm').load(%q);`, tt.id)
