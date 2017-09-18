@@ -99,6 +99,24 @@ describe('path', () => {
       });
     });
 
+    describe('.isAbsolute()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => posix.isAbsolute(true), TypeError);
+        assert.throws(() => posix.isAbsolute(0), TypeError);
+        assert.throws(() => posix.isAbsolute({}), TypeError);
+      });
+
+      it('should return true', () => {
+        assert.ok(posix.isAbsolute('/'));
+      });
+
+      it('should return false', () => {
+        assert.ok(!posix.isAbsolute(''));
+        assert.ok(!posix.isAbsolute('.'));
+        assert.ok(!posix.isAbsolute('..'));
+      });
+    });
+
     describe('.posix', () => {
       it('is path.posix', () => {
         assert.equal(posix.posix, path.posix);
@@ -200,6 +218,29 @@ describe('path', () => {
           assert.equal(win32.extname(`${v}\\index.`), '.');
           assert.equal(win32.extname(`${v}\\index`), '');
           assert.equal(win32.extname(`${v}\\.index`), '');
+        });
+      });
+    });
+
+    describe('.isAbsolute()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => win32.isAbsolute(true), TypeError);
+        assert.throws(() => win32.isAbsolute(0), TypeError);
+        assert.throws(() => win32.isAbsolute({}), TypeError);
+      });
+
+      it('should return true', () => {
+        ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share', '\\\\UNC', '//UNC'].forEach((v) => {
+          assert.ok(win32.isAbsolute(`${v}\\`));
+          assert.ok(win32.isAbsolute(`${v}/`));
+        });
+      });
+
+      it('should return false', () => {
+        ['', 'C:', 'c:'].forEach((v) => {
+          assert.ok(!win32.isAbsolute(`${v}`));
+          assert.ok(!win32.isAbsolute(`${v}.`));
+          assert.ok(!win32.isAbsolute(`${v}..`));
         });
       });
     });
