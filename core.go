@@ -355,6 +355,39 @@ var win32 = {
   },
 };
 
+function _basename(os) {
+  return function basename(path, ext) {
+    assert(path);
+    if (ext !== undefined) {
+      assert(ext);
+    }
+    // volume
+    var vol = os._volname(path);
+    if (vol
+        && vol === path) {
+      return '';
+    }
+    // trim trailing separators
+    var end;
+    for (end = path.length; vol.length < end && os._isSep(path[end - 1]); end--);
+
+    for (var i = end - 1; vol.length < i; i--) {
+      if (os._isSep(path[i])) {
+        i++;
+        if (ext
+            && path.indexOf(ext, end - ext.length) !== -1) {
+          return path.slice(i, end - ext.length);
+        }
+        return path.slice(i, end);
+      }
+    }
+    return '';
+  };
+}
+
+posix.basename = _basename(posix);
+win32.basename = _basename(win32);
+
 function _dirname(os) {
   return function dirname(path) {
     assert(path);

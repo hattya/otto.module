@@ -31,6 +31,29 @@ describe('path', () => {
   describe('.posix', () => {
     const { posix } = path;
 
+    describe('.basename()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => posix.basename(true), TypeError);
+        assert.throws(() => posix.basename(0), TypeError);
+        assert.throws(() => posix.basename({}), TypeError);
+        assert.throws(() => posix.basename('', true), TypeError);
+        assert.throws(() => posix.basename('', 0), TypeError);
+        assert.throws(() => posix.basename('', {}), TypeError);
+      });
+
+      it('should return the last portion of a path', () => {
+        assert.equal(posix.basename('/foo/bar///'), 'bar');
+        assert.equal(posix.basename('/foo/bar.html'), 'bar.html');
+        assert.equal(posix.basename('/foo/bar.html', '.html'), 'bar');
+
+        assert.equal(posix.basename('/'), '');
+
+        assert.equal(posix.basename(''), '');
+        assert.equal(posix.basename('.'), '');
+        assert.equal(posix.basename('..'), '');
+      });
+    });
+
     describe('.delimiter', () => {
       it('is ":"', () => {
         assert.equal(posix.delimiter, ':');
@@ -97,6 +120,37 @@ describe('path', () => {
 
   describe('.win32', () => {
     const { win32 } = path;
+
+    describe('.basename()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => win32.basename(true), TypeError);
+        assert.throws(() => win32.basename(0), TypeError);
+        assert.throws(() => win32.basename({}), TypeError);
+        assert.throws(() => win32.basename('', true), TypeError);
+        assert.throws(() => win32.basename('', 0), TypeError);
+        assert.throws(() => win32.basename('', {}), TypeError);
+      });
+
+      it('should return the last portion of a path', () => {
+        ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share'].forEach((v) => {
+          assert.equal(win32.basename(`${v}\\foo\\bar\\\\\\`), 'bar');
+          assert.equal(win32.basename(`${v}/foo/bar///`), 'bar');
+          assert.equal(win32.basename(`${v}\\foo\\bar.html`), 'bar.html');
+          assert.equal(win32.basename(`${v}/foo/bar.html`), 'bar.html');
+          assert.equal(win32.basename(`${v}\\foo\\bar.html`, '.html'), 'bar');
+          assert.equal(win32.basename(`${v}/foo/bar.html`, '.html'), 'bar');
+
+          assert.equal(win32.basename(`${v}\\`), '');
+          assert.equal(win32.basename(`${v}/`), '');
+
+          assert.equal(win32.basename(`${v}`), '');
+        });
+
+        assert.equal(win32.basename(''), '');
+        assert.equal(win32.basename('.'), '');
+        assert.equal(win32.basename('..'), '');
+      });
+    });
 
     describe('.delimiter', () => {
       it('is ";"', () => {
