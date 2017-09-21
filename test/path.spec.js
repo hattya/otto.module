@@ -99,6 +99,38 @@ describe('path', () => {
       });
     });
 
+    describe('.format()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => posix.format(null), TypeError);
+        assert.throws(() => posix.format(undefined), TypeError);
+        assert.throws(() => posix.format(true), TypeError);
+        assert.throws(() => posix.format(0), TypeError);
+      });
+
+      it('should return a path from an object', () => {
+        assert.equal(posix.format({
+        }), '');
+        assert.equal(posix.format({
+          root: '/',
+        }), '/');
+        assert.equal(posix.format({
+          root: '/',
+          dir: '/',
+        }), '/');
+        assert.equal(posix.format({
+          root: '/',
+          dir: '/foo',
+          base: 'bar.html',
+        }), '/foo/bar.html');
+        assert.equal(posix.format({
+          root: '/',
+          dir: '/foo',
+          name: 'bar',
+          ext: '.html',
+        }), '/foo/bar.html');
+      });
+    });
+
     describe('.isAbsolute()', () => {
       it('should throw TypeError', () => {
         assert.throws(() => posix.isAbsolute(true), TypeError);
@@ -370,6 +402,56 @@ describe('path', () => {
           assert.equal(win32.extname(`${v}\\index`), '');
           assert.equal(win32.extname(`${v}\\.index`), '');
         });
+      });
+    });
+
+    describe('.format()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => win32.format(null), TypeError);
+        assert.throws(() => win32.format(undefined), TypeError);
+        assert.throws(() => win32.format(true), TypeError);
+        assert.throws(() => win32.format(0), TypeError);
+      });
+
+      it('should return a path from an object', () => {
+        assert.equal(win32.format({
+        }), '');
+        assert.equal(win32.format({
+          root: '\\',
+        }), '\\');
+        assert.equal(win32.format({
+          root: '/',
+        }), '/');
+        assert.equal(win32.format({
+          root: '\\',
+          dir: '\\',
+        }), '\\');
+        assert.equal(win32.format({
+          root: '/',
+          dir: '/',
+        }), '/');
+        assert.equal(win32.format({
+          root: '\\',
+          dir: '\\foo',
+          base: 'bar.html',
+        }), '\\foo\\bar.html');
+        assert.equal(win32.format({
+          root: '/',
+          dir: '/foo',
+          base: 'bar.html',
+        }), '/foo\\bar.html');
+        assert.equal(win32.format({
+          root: '\\',
+          dir: '\\foo',
+          name: 'bar',
+          ext: '.html',
+        }), '\\foo\\bar.html');
+        assert.equal(win32.format({
+          root: '/',
+          dir: '/foo',
+          name: 'bar',
+          ext: '.html',
+        }), '/foo\\bar.html');
       });
     });
 

@@ -34,6 +34,7 @@ rules:
   # ESMAScript 6
   no-var: off
   object-shorthand: off
+  prefer-destructuring: off
   prefer-template: off
 
   # plugin: import
