@@ -117,6 +117,157 @@ describe('path', () => {
       });
     });
 
+    describe('.parse()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => posix.parse(true), TypeError);
+        assert.throws(() => posix.parse(0), TypeError);
+        assert.throws(() => posix.parse({}), TypeError);
+      });
+
+      it('should return an object of an absolute path', () => {
+        assert.deepEqual(posix.parse('/foo/bar///'), {
+          root: '/',
+          dir: '/foo',
+          base: 'bar',
+          name: 'bar',
+          ext: '',
+        });
+        assert.deepEqual(posix.parse('/foo/bar'), {
+          root: '/',
+          dir: '/foo',
+          base: 'bar',
+          name: 'bar',
+          ext: '',
+        });
+
+        assert.deepEqual(posix.parse('/foo/bar/index.js'), {
+          root: '/',
+          dir: '/foo/bar',
+          base: 'index.js',
+          name: 'index',
+          ext: '.js',
+        });
+        assert.deepEqual(posix.parse('/foo/bar/index.js.md'), {
+          root: '/',
+          dir: '/foo/bar',
+          base: 'index.js.md',
+          name: 'index.js',
+          ext: '.md',
+        });
+        assert.deepEqual(posix.parse('/foo/bar/index.'), {
+          root: '/',
+          dir: '/foo/bar',
+          base: 'index.',
+          name: 'index.',
+          ext: '',
+        });
+        assert.deepEqual(posix.parse('/foo/bar/index'), {
+          root: '/',
+          dir: '/foo/bar',
+          base: 'index',
+          name: 'index',
+          ext: '',
+        });
+        assert.deepEqual(posix.parse('/foo/bar/.index'), {
+          root: '/',
+          dir: '/foo/bar',
+          base: '.index',
+          name: '.index',
+          ext: '',
+        });
+
+        assert.deepEqual(posix.parse('/'), {
+          root: '/',
+          dir: '/',
+          base: '',
+          name: '',
+          ext: '',
+        });
+      });
+
+      it('should return an object of a relative path', () => {
+        assert.deepEqual(posix.parse('foo.js'), {
+          root: '',
+          dir: '',
+          base: 'foo.js',
+          name: 'foo',
+          ext: '.js',
+        });
+        assert.deepEqual(posix.parse('./foo.js'), {
+          root: '',
+          dir: '.',
+          base: 'foo.js',
+          name: 'foo',
+          ext: '.js',
+        });
+        assert.deepEqual(posix.parse('../foo.js'), {
+          root: '',
+          dir: '..',
+          base: 'foo.js',
+          name: 'foo',
+          ext: '.js',
+        });
+
+        assert.deepEqual(posix.parse('../index.js'), {
+          root: '',
+          dir: '..',
+          base: 'index.js',
+          name: 'index',
+          ext: '.js',
+        });
+        assert.deepEqual(posix.parse('../index.js.md'), {
+          root: '',
+          dir: '..',
+          base: 'index.js.md',
+          name: 'index.js',
+          ext: '.md',
+        });
+        assert.deepEqual(posix.parse('../index.'), {
+          root: '',
+          dir: '..',
+          base: 'index.',
+          name: 'index.',
+          ext: '',
+        });
+        assert.deepEqual(posix.parse('../index'), {
+          root: '',
+          dir: '..',
+          base: 'index',
+          name: 'index',
+          ext: '',
+        });
+        assert.deepEqual(posix.parse('../.index'), {
+          root: '',
+          dir: '..',
+          base: '.index',
+          name: '.index',
+          ext: '',
+        });
+
+        assert.deepEqual(posix.parse(''), {
+          root: '',
+          dir: '',
+          base: '',
+          name: '',
+          ext: '',
+        });
+        assert.deepEqual(posix.parse('.'), {
+          root: '',
+          dir: '',
+          base: '.',
+          name: '.',
+          ext: '',
+        });
+        assert.deepEqual(posix.parse('..'), {
+          root: '',
+          dir: '',
+          base: '..',
+          name: '..',
+          ext: '',
+        });
+      });
+    });
+
     describe('.posix', () => {
       it('is path.posix', () => {
         assert.equal(posix.posix, path.posix);
@@ -241,6 +392,234 @@ describe('path', () => {
           assert.ok(!win32.isAbsolute(`${v}`));
           assert.ok(!win32.isAbsolute(`${v}.`));
           assert.ok(!win32.isAbsolute(`${v}..`));
+        });
+      });
+    });
+
+    describe('.parse()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => win32.parse(true), TypeError);
+        assert.throws(() => win32.parse(0), TypeError);
+        assert.throws(() => win32.parse({}), TypeError);
+      });
+
+      it('should return an object of an absolute path', () => {
+        ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share'].forEach((v) => {
+          [
+            {
+              path: `${v}\\foo\\bar\\\\\\\\`,
+              obj: {
+                root: `${v}\\`,
+                dir: `${v}\\foo`,
+                base: 'bar',
+                name: 'bar',
+                ext: '',
+              },
+            },
+            {
+              path: `${v}\\foo\\bar`,
+              obj: {
+                root: `${v}\\`,
+                dir: `${v}\\foo`,
+                base: 'bar',
+                name: 'bar',
+                ext: '',
+              },
+            },
+
+            {
+              path: `${v}\\foo\\bar\\index.js`,
+              obj: {
+                root: `${v}\\`,
+                dir: `${v}\\foo\\bar`,
+                base: 'index.js',
+                name: 'index',
+                ext: '.js',
+              },
+            },
+            {
+              path: `${v}\\foo\\bar\\index.js.md`,
+              obj: {
+                root: `${v}\\`,
+                dir: `${v}\\foo\\bar`,
+                base: 'index.js.md',
+                name: 'index.js',
+                ext: '.md',
+              },
+            },
+            {
+              path: `${v}\\foo\\bar\\index.`,
+              obj: {
+                root: `${v}\\`,
+                dir: `${v}\\foo\\bar`,
+                base: 'index.',
+                name: 'index.',
+                ext: '',
+              },
+            },
+            {
+              path: `${v}\\foo\\bar\\index`,
+              obj: {
+                root: `${v}\\`,
+                dir: `${v}\\foo\\bar`,
+                base: 'index',
+                name: 'index',
+                ext: '',
+              },
+            },
+            {
+              path: `${v}\\foo\\bar\\.index`,
+              obj: {
+                root: `${v}\\`,
+                dir: `${v}\\foo\\bar`,
+                base: '.index',
+                name: '.index',
+                ext: '',
+              },
+            },
+
+            {
+              path: `${v}\\`,
+              obj: {
+                root: `${v}\\`,
+                dir: `${v}\\`,
+                base: '',
+                name: '',
+                ext: '',
+              },
+            },
+          ].forEach((tt) => {
+            assert.deepEqual(win32.parse(tt.path), tt.obj);
+
+            const obj = Object.assign({}, tt.obj);
+            obj.root = obj.root.replace(/\\/g, '/');
+            obj.dir = obj.dir.replace(/\\/g, '/');
+            assert.deepEqual(win32.parse(tt.path.replace(/\\/g, '/')), obj);
+          });
+        });
+      });
+
+      it('should return an object of an relative path', () => {
+        [
+          {
+            path: 'foo.js',
+            obj: {
+              root: '',
+              dir: '',
+              base: 'foo.js',
+              name: 'foo',
+              ext: '.js',
+            },
+          },
+          {
+            path: '.\\foo.js',
+            obj: {
+              root: '',
+              dir: '.',
+              base: 'foo.js',
+              name: 'foo',
+              ext: '.js',
+            },
+          },
+          {
+            path: '..\\foo.js',
+            obj: {
+              root: '',
+              dir: '..',
+              base: 'foo.js',
+              name: 'foo',
+              ext: '.js',
+            },
+          },
+
+          {
+            path: '..\\index.js',
+            obj: {
+              root: '',
+              dir: '..',
+              base: 'index.js',
+              name: 'index',
+              ext: '.js',
+            },
+          },
+          {
+            path: '..\\index.js.md',
+            obj: {
+              root: '',
+              dir: '..',
+              base: 'index.js.md',
+              name: 'index.js',
+              ext: '.md',
+            },
+          },
+          {
+            path: '..\\index.',
+            obj: {
+              root: '',
+              dir: '..',
+              base: 'index.',
+              name: 'index.',
+              ext: '',
+            },
+          },
+          {
+            path: '..\\index',
+            obj: {
+              root: '',
+              dir: '..',
+              base: 'index',
+              name: 'index',
+              ext: '',
+            },
+          },
+          {
+            path: '..\\.index',
+            obj: {
+              root: '',
+              dir: '..',
+              base: '.index',
+              name: '.index',
+              ext: '',
+            },
+          },
+
+          {
+            path: '',
+            obj: {
+              root: '',
+              dir: '',
+              base: '',
+              name: '',
+              ext: '',
+            },
+          },
+          {
+            path: '.',
+            obj: {
+              root: '',
+              dir: '',
+              base: '.',
+              name: '.',
+              ext: '',
+            },
+          },
+          {
+            path: '..',
+            obj: {
+              root: '',
+              dir: '',
+              base: '..',
+              name: '..',
+              ext: '',
+            },
+          },
+        ].forEach((tt) => {
+          assert.deepEqual(win32.parse(tt.path), tt.obj);
+
+          const obj = Object.assign({}, tt.obj);
+          obj.root = obj.root.replace(/\\/g, '/');
+          obj.dir = obj.dir.replace(/\\/g, '/');
+          assert.deepEqual(win32.parse(tt.path.replace(/\\/g, '/')), obj);
         });
       });
     });
