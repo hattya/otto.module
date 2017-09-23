@@ -149,6 +149,43 @@ describe('path', () => {
       });
     });
 
+    describe('.join()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => posix.join(true), TypeError);
+        assert.throws(() => posix.join(0), TypeError);
+        assert.throws(() => posix.join({}), TypeError);
+      });
+
+      it('should return "."', () => {
+        assert.equal(posix.join(''), '.');
+        assert.equal(posix.join('', ''), '.');
+      });
+
+      it('should return an absolute path', () => {
+        assert.equal(posix.join('/foo', '/bar///'), '/foo/bar/');
+        assert.equal(posix.join('/foo', '/bar', '///'), '/foo/bar/');
+        assert.equal(posix.join('/foo', '/bar'), '/foo/bar');
+        assert.equal(posix.join('/foo', '/bar', 'baz', '..'), '/foo/bar');
+
+        assert.equal(posix.join('/foo', 'bar///'), '/foo/bar/');
+        assert.equal(posix.join('/foo', 'bar', '///'), '/foo/bar/');
+        assert.equal(posix.join('/foo', 'bar'), '/foo/bar');
+        assert.equal(posix.join('/foo', 'bar', 'baz', '..'), '/foo/bar');
+      });
+
+      it('should return a relative path', () => {
+        assert.equal(posix.join('foo', '/bar///'), 'foo/bar/');
+        assert.equal(posix.join('foo', '/bar', '///'), 'foo/bar/');
+        assert.equal(posix.join('foo', '/bar'), 'foo/bar');
+        assert.equal(posix.join('foo', '/bar', 'baz', '..'), 'foo/bar');
+
+        assert.equal(posix.join('..', 'foo', '..', '/bar///'), '../bar/');
+        assert.equal(posix.join('..', 'foo', '..', '/bar', '///'), '../bar/');
+        assert.equal(posix.join('..', 'foo', '..', '/bar'), '../bar');
+        assert.equal(posix.join('..', 'foo', '..', '/bar', 'baz', '..'), '../bar');
+      });
+    });
+
     describe('.normalize()', () => {
       it('should throw TypeError', () => {
         assert.throws(() => posix.parse(true), TypeError);
@@ -590,6 +627,65 @@ describe('path', () => {
           assert.equal(win32.normalize(`${v}./../foo/.././bar.`), `${v}..\\bar.`);
           assert.equal(win32.normalize(`${v}.\\..\\foo\\..\\.\\bar..`), `${v}..\\bar..`);
           assert.equal(win32.normalize(`${v}./../foo/.././bar..`), `${v}..\\bar..`);
+        });
+      });
+    });
+
+    describe('.join()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => win32.join(true), TypeError);
+        assert.throws(() => win32.join(0), TypeError);
+        assert.throws(() => win32.join({}), TypeError);
+      });
+
+      it('should return "."', () => {
+        assert.equal(win32.join(''), '.');
+        assert.equal(win32.join('', ''), '.');
+      });
+
+      it('should return an absolute path', () => {
+        ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share'].forEach((v) => {
+          const w = v.replace(/\//g, '\\');
+          assert.equal(win32.join(v, '\\foo', '\\bar\\\\\\'), `${w}\\foo\\bar\\`);
+          assert.equal(win32.join(v, '/foo', '/bar///'), `${w}\\foo\\bar\\`);
+          assert.equal(win32.join(v, '\\foo', '\\bar', '\\\\\\'), `${w}\\foo\\bar\\`);
+          assert.equal(win32.join(v, '/foo', '/bar', '///'), `${w}\\foo\\bar\\`);
+          assert.equal(win32.join(v, '\\foo', '\\bar'), `${w}\\foo\\bar`);
+          assert.equal(win32.join(v, '/foo', '/bar'), `${w}\\foo\\bar`);
+          assert.equal(win32.join(v, '\\foo', '\\bar', 'baz', '..'), `${w}\\foo\\bar`);
+          assert.equal(win32.join(v, '/foo', '/bar', 'baz', '..'), `${w}\\foo\\bar`);
+
+          assert.equal(win32.join(v, '\\foo', 'bar\\\\\\'), `${w}\\foo\\bar\\`);
+          assert.equal(win32.join(v, '/foo', 'bar///'), `${w}\\foo\\bar\\`);
+          assert.equal(win32.join(v, '\\foo', 'bar', '///'), `${w}\\foo\\bar\\`);
+          assert.equal(win32.join(v, '/foo', 'bar', '///'), `${w}\\foo\\bar\\`);
+          assert.equal(win32.join(v, '\\foo', 'bar'), `${w}\\foo\\bar`);
+          assert.equal(win32.join(v, '/foo', 'bar'), `${w}\\foo\\bar`);
+          assert.equal(win32.join(v, '\\foo', 'bar', 'baz', '..'), `${w}\\foo\\bar`);
+          assert.equal(win32.join(v, '/foo', 'bar', 'baz', '..'), `${w}\\foo\\bar`);
+        });
+      });
+
+      it('should return a relative path', () => {
+        ['', 'C:', 'c:'].forEach((v) => {
+          const w = v.replace(/\//g, '\\');
+          assert.equal(win32.join(`${v}foo`, '\\bar\\\\\\'), `${w}foo\\bar\\`);
+          assert.equal(win32.join(`${v}foo`, '/bar///'), `${w}foo\\bar\\`);
+          assert.equal(win32.join(`${v}foo`, '\\bar', '\\\\\\'), `${w}foo\\bar\\`);
+          assert.equal(win32.join(`${v}foo`, '/bar', '///'), `${w}foo\\bar\\`);
+          assert.equal(win32.join(`${v}foo`, '\\bar'), `${w}foo\\bar`);
+          assert.equal(win32.join(`${v}foo`, '/bar'), `${w}foo\\bar`);
+          assert.equal(win32.join(`${v}foo`, '\\bar', 'baz', '..'), `${w}foo\\bar`);
+          assert.equal(win32.join(`${v}foo`, '/bar', 'baz', '..'), `${w}foo\\bar`);
+
+          assert.equal(win32.join(`${v}..`, 'foo', '..', '\\bar\\\\\\'), `${w}..\\bar\\`);
+          assert.equal(win32.join(`${v}..`, 'foo', '..', '/bar///'), `${w}..\\bar\\`);
+          assert.equal(win32.join(`${v}..`, 'foo', '..', '\\bar', '\\\\\\'), `${w}..\\bar\\`);
+          assert.equal(win32.join(`${v}..`, 'foo', '..', '/bar', '///'), `${w}..\\bar\\`);
+          assert.equal(win32.join(`${v}..`, 'foo', '..', '\\bar'), `${w}..\\bar`);
+          assert.equal(win32.join(`${v}..`, 'foo', '..', '/bar'), `${w}..\\bar`);
+          assert.equal(win32.join(`${v}..`, 'foo', '..', '\\bar', 'baz', '..'), `${w}..\\bar`);
+          assert.equal(win32.join(`${v}..`, 'foo', '..', '/bar', 'baz', '..'), `${w}..\\bar`);
         });
       });
     });

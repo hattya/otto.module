@@ -35,6 +35,7 @@ rules:
   no-var: off
   object-shorthand: off
   prefer-destructuring: off
+  prefer-rest-params: off
   prefer-template: off
 
   # plugin: import
