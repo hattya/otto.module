@@ -149,6 +149,49 @@ describe('path', () => {
       });
     });
 
+    describe('.normalize()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => posix.parse(true), TypeError);
+        assert.throws(() => posix.parse(0), TypeError);
+        assert.throws(() => posix.parse({}), TypeError);
+      });
+
+      it('should return "."', () => {
+        assert.equal(posix.normalize(''), '.');
+        assert.equal(posix.normalize('./'), './');
+        assert.equal(posix.normalize('.'), '.');
+      });
+
+      it('should return an absolute path', () => {
+        assert.equal(posix.normalize('/foo/./bar/..///'), '/foo/');
+        assert.equal(posix.normalize('/foo/./bar/..'), '/foo');
+        assert.equal(posix.normalize('/foo/./bar/.././../..'), '/');
+
+        assert.equal(posix.normalize('/foo/.././../.bar'), '/.bar');
+        assert.equal(posix.normalize('/foo/.././../..bar'), '/..bar');
+        assert.equal(posix.normalize('/foo/.././../bar.'), '/bar.');
+        assert.equal(posix.normalize('/foo/.././../bar..'), '/bar..');
+      });
+
+      it('should return a relative path', () => {
+        assert.equal(posix.normalize('foo/./bar///'), 'foo/bar/');
+        assert.equal(posix.normalize('foo/./bar'), 'foo/bar');
+
+        assert.equal(posix.normalize('foo/./.bar'), 'foo/.bar');
+        assert.equal(posix.normalize('foo/./..bar'), 'foo/..bar');
+        assert.equal(posix.normalize('foo/./bar.'), 'foo/bar.');
+        assert.equal(posix.normalize('foo/./bar..'), 'foo/bar..');
+
+        assert.equal(posix.normalize('./.././../foo/./.././/bar///'), '../../bar/');
+        assert.equal(posix.normalize('./.././../foo/./.././bar'), '../../bar');
+
+        assert.equal(posix.normalize('./../foo/.././.bar'), '../.bar');
+        assert.equal(posix.normalize('./../foo/.././..bar'), '../..bar');
+        assert.equal(posix.normalize('./../foo/.././bar.'), '../bar.');
+        assert.equal(posix.normalize('./../foo/.././bar..'), '../bar..');
+      });
+    });
+
     describe('.parse()', () => {
       it('should throw TypeError', () => {
         assert.throws(() => posix.parse(true), TypeError);
@@ -474,6 +517,79 @@ describe('path', () => {
           assert.ok(!win32.isAbsolute(`${v}`));
           assert.ok(!win32.isAbsolute(`${v}.`));
           assert.ok(!win32.isAbsolute(`${v}..`));
+        });
+      });
+    });
+
+    describe('.normalize()', () => {
+      it('should throw TypeError', () => {
+        assert.throws(() => win32.normalize(true), TypeError);
+        assert.throws(() => win32.normalize(0), TypeError);
+        assert.throws(() => win32.normalize({}), TypeError);
+      });
+
+      it('should return "."', () => {
+        ['', 'C:', 'c:'].forEach((v) => {
+          assert.equal(win32.normalize(`${v}`), `${v}.`);
+          assert.equal(win32.normalize(`${v}.\\`), `${v}.\\`);
+          assert.equal(win32.normalize(`${v}./`), `${v}.\\`);
+          assert.equal(win32.normalize(`${v}.`), `${v}.`);
+        });
+      });
+
+      it('should return an absolute path', () => {
+        ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share'].forEach((v) => {
+          const w = v.replace(/\//g, '\\');
+          assert.equal(win32.normalize(`${v}\\foo\\.\\bar\\..\\\\\\`), `${w}\\foo\\`);
+          assert.equal(win32.normalize(`${v}/foo/./bar/..///`), `${w}\\foo\\`);
+          assert.equal(win32.normalize(`${v}\\foo\\.\\bar\\..`), `${w}\\foo`);
+          assert.equal(win32.normalize(`${v}/foo/./bar/..`), `${w}\\foo`);
+          assert.equal(win32.normalize(`${v}\\foo\\.\\bar\\..\\.\\..\\..`), `${w}\\`);
+          assert.equal(win32.normalize(`${v}/foo/./bar/.././../..`), `${w}\\`);
+
+          assert.equal(win32.normalize(`${v}\\foo\\..\\.\\..\\.bar`), `${w}\\.bar`);
+          assert.equal(win32.normalize(`${v}/foo/.././../.bar`), `${w}\\.bar`);
+          assert.equal(win32.normalize(`${v}\\foo\\..\\.\\..\\..bar`), `${w}\\..bar`);
+          assert.equal(win32.normalize(`${v}/foo/.././../..bar`), `${w}\\..bar`);
+          assert.equal(win32.normalize(`${v}\\foo\\..\\.\\..\\bar.`), `${w}\\bar.`);
+          assert.equal(win32.normalize(`${v}/foo/.././../bar.`), `${w}\\bar.`);
+          assert.equal(win32.normalize(`${v}\\foo\\..\\.\\..\\bar..`), `${w}\\bar..`);
+          assert.equal(win32.normalize(`${v}/foo/.././../bar..`), `${w}\\bar..`);
+        });
+
+        assert.equal(win32.normalize('\\\\UNC\\share'), '\\\\UNC\\share\\');
+        assert.equal(win32.normalize('//UNC/share'), '\\\\UNC\\share\\');
+      });
+
+      it('should return a relative path', () => {
+        ['', 'C:', 'c:'].forEach((v) => {
+          assert.equal(win32.normalize(`${v}foo\\.\\bar\\\\\\`), `${v}foo\\bar\\`);
+          assert.equal(win32.normalize(`${v}foo/./bar///`), `${v}foo\\bar\\`);
+          assert.equal(win32.normalize(`${v}foo\\.\\bar`), `${v}foo\\bar`);
+          assert.equal(win32.normalize(`${v}foo/./bar`), `${v}foo\\bar`);
+
+          assert.equal(win32.normalize(`${v}foo\\.\\.bar`), `${v}foo\\.bar`);
+          assert.equal(win32.normalize(`${v}foo/./.bar`), `${v}foo\\.bar`);
+          assert.equal(win32.normalize(`${v}foo\\.\\..bar`), `${v}foo\\..bar`);
+          assert.equal(win32.normalize(`${v}foo/./..bar`), `${v}foo\\..bar`);
+          assert.equal(win32.normalize(`${v}foo\\.\\bar.`), `${v}foo\\bar.`);
+          assert.equal(win32.normalize(`${v}foo/./bar.`), `${v}foo\\bar.`);
+          assert.equal(win32.normalize(`${v}foo\\.\\bar..`), `${v}foo\\bar..`);
+          assert.equal(win32.normalize(`${v}foo/./bar..`), `${v}foo\\bar..`);
+
+          assert.equal(win32.normalize(`${v}.\\..\\.\\..\\foo\\.\\..\\.\\\\bar\\\\\\`), `${v}..\\..\\bar\\`);
+          assert.equal(win32.normalize(`${v}./.././../foo/./.././/bar///`), `${v}..\\..\\bar\\`);
+          assert.equal(win32.normalize(`${v}.\\..\\.\\..\\foo\\.\\..\\.\\bar`), `${v}..\\..\\bar`);
+          assert.equal(win32.normalize(`${v}./.././../foo/./.././bar`), `${v}..\\..\\bar`);
+
+          assert.equal(win32.normalize(`${v}.\\..\\foo\\..\\.\\.bar`), `${v}..\\.bar`);
+          assert.equal(win32.normalize(`${v}./../foo/.././.bar`), `${v}..\\.bar`);
+          assert.equal(win32.normalize(`${v}.\\..\\foo\\..\\.\\..bar`), `${v}..\\..bar`);
+          assert.equal(win32.normalize(`${v}./../foo/.././..bar`), `${v}..\\..bar`);
+          assert.equal(win32.normalize(`${v}.\\..\\foo\\..\\.\\bar.`), `${v}..\\bar.`);
+          assert.equal(win32.normalize(`${v}./../foo/.././bar.`), `${v}..\\bar.`);
+          assert.equal(win32.normalize(`${v}.\\..\\foo\\..\\.\\bar..`), `${v}..\\bar..`);
+          assert.equal(win32.normalize(`${v}./../foo/.././bar..`), `${v}..\\bar..`);
         });
       });
     });
