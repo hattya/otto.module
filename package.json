@@ -8,7 +8,7 @@
     "url": "https://github.com/hattya/otto.module"
   },
   "scripts": {
-    "test": "nyc mocha --compilers js:babel-register",
+    "test": "nyc mocha --require babel-register",
     "cover": "nyc --reporter=lcov npm test",
     "lint": "eslint lib test"
   },
