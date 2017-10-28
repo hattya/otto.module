@@ -36,7 +36,7 @@ Usage
    		os.Exit(1)
    	}
 
-   	file := &module.FileLoader{}
+   	file := new(module.FileLoader)
    	folder := &module.FolderLoader{File: file}
    	vm.Register(file)
    	vm.Register(folder)

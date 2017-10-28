@@ -67,7 +67,7 @@ func New() (*Otto, error) {
 }
 
 func (vm *Otto) init() {
-	vm.Register(&coreLoader{})
+	vm.Register(new(coreLoader))
 	// builtins
 	vm.Bind("natives", func(o *otto.Object) error {
 		for n, b := range files {

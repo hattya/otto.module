@@ -169,7 +169,7 @@ func TestRequire(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	file := &module.FileLoader{}
+	file := new(module.FileLoader)
 	folder := &module.FolderLoader{File: file}
 	vm.Register(file)
 	vm.Register(folder)
@@ -230,7 +230,7 @@ func TestRequireFile(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	vm.Register(&module.FileLoader{})
+	vm.Register(new(module.FileLoader))
 
 	for _, tt := range requireFileTests {
 		src := fmt.Sprintf(`require(%q);`, tt.id)
@@ -283,7 +283,7 @@ func TestRequireFolder(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	vm.Register(&module.FolderLoader{File: &module.FileLoader{}})
+	vm.Register(&module.FolderLoader{File: new(module.FileLoader)})
 
 	for _, tt := range requireFolderTests {
 		src := fmt.Sprintf(`require(%q);`, tt.id)
@@ -325,7 +325,7 @@ func TestRequireNodeModules(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	file := &module.FileLoader{}
+	file := new(module.FileLoader)
 	vm.Register(&module.NodeModulesLoader{
 		File: file,
 		Folder: &module.FolderLoader{
@@ -373,7 +373,7 @@ func TestRequireError(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	l := &loader{}
+	l := new(loader)
 	vm.Register(l)
 
 	for _, tt := range requireErrorTests {
@@ -456,7 +456,7 @@ func TestRequire_Resolve(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	file := &module.FileLoader{}
+	file := new(module.FileLoader)
 	folder := &module.FolderLoader{File: file}
 	vm.Register(file)
 	vm.Register(folder)
@@ -543,7 +543,7 @@ func TestBinding_VMLoad(t *testing.T) {
 		t.Fatal(module.OttoError{Err: err})
 	}
 
-	file := &module.FileLoader{}
+	file := new(module.FileLoader)
 	folder := &module.FolderLoader{File: file}
 	vm.Register(file)
 	vm.Register(folder)
