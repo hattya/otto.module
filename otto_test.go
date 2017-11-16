@@ -28,10 +28,35 @@ package module_test
 
 import (
 	"errors"
+	"reflect"
 	"testing"
 
 	"github.com/hattya/otto.module"
 )
+
+func TestWrap(t *testing.T) {
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err1 := vm.Run(`throw new Error('error');`)
+	_, err2 := vm.Run(`--;`)
+	err3 := errors.New("error")
+
+	for _, tt := range []struct {
+		in, out error
+	}{
+		{err1, module.OttoError{Err: err1}},
+		{err2, module.OttoError{Err: err2}},
+		{err3, err3},
+		{nil, nil},
+	} {
+		if g, e := module.Wrap(tt.in), tt.out; !reflect.DeepEqual(g, e) {
+			t.Errorf("expected %#v, got %#v", e, g)
+		}
+	}
+}
 
 func TestOttoError(t *testing.T) {
 	vm, err := module.New()

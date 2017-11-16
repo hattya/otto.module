@@ -166,7 +166,7 @@ var requireTests = []struct {
 func TestRequire(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	file := new(module.FileLoader)
@@ -227,7 +227,7 @@ var requireFileTests = []struct {
 func TestRequireFile(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	vm.Register(new(module.FileLoader))
@@ -238,7 +238,7 @@ func TestRequireFile(t *testing.T) {
 		switch {
 		case err != nil:
 			if tt.err == "" || !strings.HasPrefix(err.Error(), tt.err) {
-				t.Error(module.OttoError{Err: err})
+				t.Error(module.Wrap(err))
 			}
 		case tt.err != "":
 			t.Errorf("%v: expected error", strings.Trim(src, ";"))
@@ -280,7 +280,7 @@ var requireFolderTests = []struct {
 func TestRequireFolder(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	vm.Register(&module.FolderLoader{File: new(module.FileLoader)})
@@ -291,7 +291,7 @@ func TestRequireFolder(t *testing.T) {
 		switch {
 		case err != nil:
 			if tt.err == "" || !strings.HasPrefix(err.Error(), tt.err) {
-				t.Error(module.OttoError{Err: err})
+				t.Error(module.Wrap(err))
 			}
 		case tt.err != "":
 			t.Errorf("%v: expected error", strings.Trim(src, ";"))
@@ -322,7 +322,7 @@ func TestRequireNodeModules(t *testing.T) {
 
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	file := new(module.FileLoader)
@@ -339,7 +339,7 @@ func TestRequireNodeModules(t *testing.T) {
 		switch {
 		case err != nil:
 			if tt.err == "" || !strings.HasPrefix(err.Error(), tt.err) {
-				t.Error(module.OttoError{Err: err})
+				t.Error(module.Wrap(err))
 			}
 		case tt.err != "":
 			t.Errorf("%v: expected error", strings.Trim(src, ";"))
@@ -370,7 +370,7 @@ var requireErrorTests = []struct {
 func TestRequireError(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	l := new(loader)
@@ -384,7 +384,7 @@ func TestRequireError(t *testing.T) {
 			t.Error("expected error")
 		}
 		if _, err := vm.Run(`delete require.cache['_'];`); err != nil {
-			t.Error(module.OttoError{Err: err})
+			t.Error(module.Wrap(err))
 		}
 	}
 }
@@ -402,7 +402,7 @@ var require_ExtensionsTests = []struct {
 func TestRequire_Extensions(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	tmpl := `(%q in require.extensions);`
@@ -412,7 +412,7 @@ func TestRequire_Extensions(t *testing.T) {
 		v, err := vm.Run(src)
 		switch {
 		case err != nil:
-			t.Error(module.OttoError{Err: err})
+			t.Error(module.Wrap(err))
 		case v != tt.v:
 			t.Errorf("%v = %v, expected %v", strings.Trim(src, ";"), v, tt.v)
 		}
@@ -453,7 +453,7 @@ func TestRequire_Resolve(t *testing.T) {
 
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	file := new(module.FileLoader)
@@ -475,7 +475,7 @@ func TestRequire_Resolve(t *testing.T) {
 	for _, tt := range require_ResolveTests {
 		src := fmt.Sprintf(tmpl, tt.id)
 		if v, err := vm.Run(src); err != nil {
-			t.Error(module.OttoError{Err: err})
+			t.Error(module.Wrap(err))
 		} else {
 			s, _ := v.ToString()
 			if g, e := s, tt.name; g != e {
@@ -488,7 +488,7 @@ func TestRequire_Resolve(t *testing.T) {
 func TestBindingError(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	vm.Bind("!", func(o *otto.Object) error {
@@ -540,7 +540,7 @@ func TestBinding_VMLoad(t *testing.T) {
 
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	file := new(module.FileLoader)
@@ -558,7 +558,7 @@ func TestBinding_VMLoad(t *testing.T) {
 		switch {
 		case err != nil:
 			if tt.ok {
-				t.Error(module.OttoError{Err: err})
+				t.Error(module.Wrap(err))
 			}
 		case !tt.ok:
 			t.Errorf("%v: expected error", strings.Trim(src, ";"))
@@ -582,7 +582,7 @@ var binding_VMErrorTests = []struct {
 func TestBinding_VMError(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	for _, tt := range binding_VMErrorTests {
@@ -597,7 +597,7 @@ func TestBinding_VMError(t *testing.T) {
 func TestThrow(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
-		t.Fatal(module.OttoError{Err: err})
+		t.Fatal(module.Wrap(err))
 	}
 
 	func() {

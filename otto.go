@@ -48,6 +48,16 @@ func Throw(vm *otto.Otto, err error) otto.Value {
 	panic(vm.MakeCustomError("Error", err.Error()))
 }
 
+func Wrap(err error) error {
+	switch err.(type) {
+	case *otto.Error:
+	case parser.ErrorList:
+	default:
+		return err
+	}
+	return OttoError{Err: err}
+}
+
 type OttoError struct {
 	Err error
 }
