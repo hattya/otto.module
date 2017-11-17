@@ -13,7 +13,7 @@ func (*coreLoader) Load(id string) ([]byte, error) {
 }
 
 func (*coreLoader) Resolve(id, _ string) (string, error) {
-	for _, ext := range []string{"", ".js"} {
+	for _, ext := range []string{"", ".js", ".json"} {
 		k := id + ext
 		if _, ok := files[k]; ok {
 			return k, nil

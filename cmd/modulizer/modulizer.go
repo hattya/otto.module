@@ -93,7 +93,7 @@ func main() {
 	fmt.Fprintf(buf, "}\n\n")
 	// loader.Resolve
 	fmt.Fprintf(buf, "func (*%v) Resolve(id, _ string) (string, error) {\n", l)
-	fmt.Fprintln(buf, `for _, ext := range []string{"", ".js"} {`)
+	fmt.Fprintln(buf, `for _, ext := range []string{"", ".js", ".json"} {`)
 	fmt.Fprintln(buf, "k := id + ext")
 	fmt.Fprintf(buf, "if _, ok := %v[k]; ok {\n", v)
 	fmt.Fprintln(buf, "return k, nil")
@@ -104,10 +104,11 @@ func main() {
 	// variable
 	fmt.Fprintf(buf, "var %v = map[string][]byte{\n", v)
 	filepath.Walk(root, func(path string, fi os.FileInfo, err error) error {
-		switch {
-		case err != nil:
+		if err != nil || fi.IsDir() {
 			return err
-		case !fi.IsDir() && strings.HasSuffix(path, ".js"):
+		}
+		switch filepath.Ext(path) {
+		case ".js", ".json":
 			b, err := ioutil.ReadFile(path)
 			if err != nil {
 				exit(err)
