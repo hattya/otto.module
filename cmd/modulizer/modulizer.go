@@ -93,8 +93,11 @@ func main() {
 	fmt.Fprintf(buf, "}\n\n")
 	// loader.Resolve
 	fmt.Fprintf(buf, "func (*%v) Resolve(id, _ string) (string, error) {\n", l)
-	fmt.Fprintf(buf, "if _, ok := %v[id]; ok {\n", v)
-	fmt.Fprintln(buf, "return id, nil")
+	fmt.Fprintln(buf, `for _, ext := range []string{"", ".js"} {`)
+	fmt.Fprintln(buf, "k := id + ext")
+	fmt.Fprintf(buf, "if _, ok := %v[k]; ok {\n", v)
+	fmt.Fprintln(buf, "return k, nil")
+	fmt.Fprintln(buf, "}")
 	fmt.Fprintln(buf, "}")
 	fmt.Fprintf(buf, "return \"\", %v\n", e)
 	fmt.Fprintf(buf, "}\n\n")
