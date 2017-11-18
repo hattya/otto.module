@@ -177,14 +177,14 @@ func TestRequire(t *testing.T) {
 		File:   file,
 		Folder: folder,
 	})
-	src := `
+	tmpl := `
 		var imports = require(%q);
 		if (imports.join() !== %q) throw new Error(imports);
 	`
 
 	for _, tt := range requireTests {
-		_, err := vm.Run(fmt.Sprintf(src, tt.id, strings.Join(tt.imports, ",")))
-		if err != nil {
+		src := fmt.Sprintf(tmpl, tt.id, strings.Join(tt.imports, ","))
+		if _, err := vm.Run(src); err != nil {
 			t.Errorf("require(%q) = %v", tt.id, err)
 		}
 	}
@@ -234,8 +234,7 @@ func TestRequireFile(t *testing.T) {
 
 	for _, tt := range requireFileTests {
 		src := fmt.Sprintf(`require(%q);`, tt.id)
-		_, err := vm.Run(src)
-		switch {
+		switch _, err := vm.Run(src); {
 		case err != nil:
 			if tt.err == "" || !strings.HasPrefix(err.Error(), tt.err) {
 				t.Error(module.Wrap(err))
@@ -287,8 +286,7 @@ func TestRequireFolder(t *testing.T) {
 
 	for _, tt := range requireFolderTests {
 		src := fmt.Sprintf(`require(%q);`, tt.id)
-		_, err := vm.Run(src)
-		switch {
+		switch _, err := vm.Run(src); {
 		case err != nil:
 			if tt.err == "" || !strings.HasPrefix(err.Error(), tt.err) {
 				t.Error(module.Wrap(err))
@@ -335,8 +333,7 @@ func TestRequireNodeModules(t *testing.T) {
 
 	for _, tt := range requireNodeModulesTests {
 		src := fmt.Sprintf(`require(%q);`, tt.id)
-		_, err := vm.Run(src)
-		switch {
+		switch _, err := vm.Run(src); {
 		case err != nil:
 			if tt.err == "" || !strings.HasPrefix(err.Error(), tt.err) {
 				t.Error(module.Wrap(err))
@@ -409,8 +406,7 @@ func TestRequire_Extensions(t *testing.T) {
 
 	for _, tt := range require_ExtensionsTests {
 		src := fmt.Sprintf(tmpl, tt.ext)
-		v, err := vm.Run(src)
-		switch {
+		switch v, err := vm.Run(src); {
 		case err != nil:
 			t.Error(module.Wrap(err))
 		case v != tt.v:
@@ -496,8 +492,8 @@ func TestBindingError(t *testing.T) {
 	})
 
 	for _, id := range []string{`null`, `'_'`, `'!'`} {
-		_, err := vm.Run(fmt.Sprintf(`process.binding(%v);`, id))
-		if err == nil {
+		src := fmt.Sprintf(`process.binding(%v);`, id)
+		if _, err := vm.Run(src); err == nil {
 			t.Error("expected error")
 		}
 	}
@@ -554,8 +550,7 @@ func TestBinding_VMLoad(t *testing.T) {
 
 	for _, tt := range binding_VMLoadTests {
 		src := fmt.Sprintf(`process.binding('vm').load(%q);`, tt.id)
-		_, err := vm.Run(src)
-		switch {
+		switch _, err := vm.Run(src); {
 		case err != nil:
 			if tt.ok {
 				t.Error(module.Wrap(err))
@@ -587,8 +582,7 @@ func TestBinding_VMError(t *testing.T) {
 
 	for _, tt := range binding_VMErrorTests {
 		src := fmt.Sprintf(`process.binding('vm').%v(%v);`, tt.fn, strings.Join(tt.args, ", "))
-		_, err := vm.Run(src)
-		if err == nil {
+		if _, err := vm.Run(src); err == nil {
 			t.Errorf("%v: expected error", strings.Trim(src, ";"))
 		}
 	}
