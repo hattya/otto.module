@@ -394,6 +394,9 @@ win32.basename = _basename(win32);
 function _dirname(os) {
   return function dirname(path) {
     assert(path);
+    if (!path) {
+      return '.';
+    }
     // volume
     var vol = os._volname(path);
     if (vol
