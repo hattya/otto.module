@@ -3,6 +3,15 @@ otto.module
 
 An implementation of the `Node.js module loading system`_ for otto_.
 
+.. image:: https://semaphoreci.com/api/v1/hattya/otto-module/branches/master/badge.svg
+   :target: https://semaphoreci.com/hattya/otto-module
+
+.. image:: https://ci.appveyor.com/api/projects/status/2uan2alkj5c6xe0r?svg=true
+   :target: https://ci.appveyor.com/project/hattya/otto-module
+
+.. image:: https://codecov.io/gh/hattya/otto.module/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/hattya/otto.module
+
 .. _Node.js module loading system: https://nodejs.org/api/modules.html
 .. _otto: https://github.com/robertkrimen/otto
 
