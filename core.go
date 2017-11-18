@@ -400,11 +400,6 @@ function _dirname(os) {
         && vol === path) {
       return vol;
     }
-    // relative
-    if (path === vol
-        || !os._isSep(path[vol.length])) {
-      return '.';
-    }
     // trim trailing separators
     var end;
     for (end = path.length; vol.length < end && os._isSep(path[end - 1]); end--);
@@ -414,7 +409,7 @@ function _dirname(os) {
         return path.slice(0, i);
       }
     }
-    return vol ? vol + path[end] : path[end];
+    return end < path.length ? vol + path[end] : '.';
   };
 }
 

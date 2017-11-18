@@ -73,6 +73,9 @@ describe('path', () => {
 
         assert.equal(posix.dirname('/'), '/');
 
+        assert.equal(posix.dirname('foo/bar///'), 'foo');
+        assert.equal(posix.dirname('foo/bar'), 'foo');
+
         assert.equal(posix.dirname('foo'), '.');
 
         assert.equal(posix.dirname(''), '.');
@@ -458,6 +461,11 @@ describe('path', () => {
 
           assert.equal(win32.dirname(v), v || '.');
         });
+
+        assert.equal(win32.dirname('foo\\bar\\\\\\'), 'foo');
+        assert.equal(win32.dirname('foo/bar///'), 'foo');
+        assert.equal(win32.dirname('foo\\bar'), 'foo');
+        assert.equal(win32.dirname('foo/bar'), 'foo');
 
         assert.equal(win32.dirname('foo'), '.');
 
