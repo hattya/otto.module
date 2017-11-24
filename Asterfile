@@ -38,7 +38,7 @@ aster.watch(/.+\.go$/, function(files) {
   if (go('get', '-t', '-v', './...')) {
     return;
   }
-  if (files.some(function(e) { return e.replace(/\\/g, '/').lastIndexOf('cmd/modulizer', 0) === 0; })) {
+  if (files.some(function(e) { return /[/\\]modulizer.go$/.test(e); })) {
     if (go('generate', './...')) {
       return;
     }
