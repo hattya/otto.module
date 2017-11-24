@@ -5,9 +5,11 @@ package module
 type coreLoader struct {
 }
 
-func (*coreLoader) Load(id string) ([]byte, error) {
-	if b, ok := files[id]; ok {
-		return b, nil
+func (l *coreLoader) Load(id string) ([]byte, error) {
+	for _, ext := range []string{"", ".js", ".json"} {
+		if b, ok := files[id+ext]; ok {
+			return b, nil
+		}
 	}
 	return nil, ErrModule
 }

@@ -87,9 +87,11 @@ func gen(root string) error {
 	fmt.Fprintf(buf, "type %v struct {\n", l)
 	fmt.Fprintf(buf, "}\n\n")
 	// loader.Load
-	fmt.Fprintf(buf, "func (*%v) Load(id string) ([]byte, error) {\n", l)
-	fmt.Fprintf(buf, "if b, ok := %v[id]; ok {\n", *flagV)
+	fmt.Fprintf(buf, "func (l *%v) Load(id string) ([]byte, error) {\n", l)
+	fmt.Fprintln(buf, `for _, ext := range []string{"", ".js", ".json"} {`)
+	fmt.Fprintf(buf, "if b, ok := %v[id+ext]; ok {\n", *flagV)
 	fmt.Fprintln(buf, "return b, nil")
+	fmt.Fprintln(buf, "}")
 	fmt.Fprintln(buf, "}")
 	fmt.Fprintf(buf, "return nil, %v\n", e)
 	fmt.Fprintf(buf, "}\n\n")
