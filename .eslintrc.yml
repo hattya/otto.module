@@ -31,7 +31,7 @@ rules:
     - error
     - never
 
-  # ESMAScript 6
+  # ECMAScript 6
   no-var: off
   object-shorthand: off
   prefer-destructuring: off
