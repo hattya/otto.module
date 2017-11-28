@@ -213,6 +213,8 @@ var requireFileTests = []struct {
 	{"/", "Error"},
 	{"./", "Error"},
 	{"../", "Error"},
+	// empty
+	{"", "Error"},
 	// nonexistent
 	{"/_", "Error"},
 	{"./_", "Error"},
@@ -265,6 +267,8 @@ var requireFolderTests = []struct {
 	{"./testdata/error06", "Error"},
 	// invalid JSON
 	{"./testdata/error07", "SyntaxError"},
+	// empty
+	{"", "Error"},
 	// nonexistent
 	{"/_", "Error"},
 	{"./_", "Error"},
