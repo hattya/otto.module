@@ -619,6 +619,30 @@ func TestEnv_Get(t *testing.T) {
 	}
 }
 
+func TestEnv_Has(t *testing.T) {
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(module.Wrap(err))
+	}
+
+	k := "__OTTO_MODULE__"
+	fn := "process.env.__has__"
+	if err := os.Setenv(k, fn); err != nil {
+		t.Fatal(err)
+	}
+
+	src := fmt.Sprintf(`%v(%q);`, fn, k)
+	if v, err := vm.Run(src); err != nil {
+		t.Error(module.Wrap(err))
+	} else if b, _ := v.ToBoolean(); !b {
+		t.Errorf("%v = true, expected false", strings.Trim(src, ";"))
+	}
+
+	if _, err := vm.Run(fmt.Sprintf(`%v();`, fn)); err == nil {
+		t.Error("expected error")
+	}
+}
+
 func TestEnv_Set(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {

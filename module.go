@@ -168,6 +168,7 @@ func (vm *Otto) process() otto.Value {
 	o.Set("binding", vm.binding)
 	env, _ := vm.Object(`({})`)
 	env.Set("__get__", vm.env_get)
+	env.Set("__has__", vm.env_has)
 	env.Set("__set__", vm.env_set)
 	o.Set("env", env)
 	if runtime.GOOS == "windows" {
@@ -198,6 +199,17 @@ func (vm *Otto) env_get(call otto.FunctionCall) otto.Value {
 	}
 
 	v, _ := vm.ToValue(os.Getenv(k))
+	return v
+}
+
+func (vm *Otto) env_has(call otto.FunctionCall) otto.Value {
+	k, err := vm.toString("key", call.Argument(0))
+	if err != nil {
+		return vm.throw(err)
+	}
+
+	_, ok := os.LookupEnv(k)
+	v, _ := vm.ToValue(ok)
 	return v
 }
 
