@@ -1,7 +1,7 @@
 //
 // otto.module :: module.go
 //
-//   Copyright (c) 2017 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2018 Akinori Hattori <hattya@gmail.com>
 //
 //   Permission is hereby granted, free of charge, to any person
 //   obtaining a copy of this software and associated documentation files
@@ -121,6 +121,10 @@ func (vm *Otto) compile(call otto.FunctionCall) otto.Value {
 	return v
 }
 
+func (vm *Otto) wrap(b []byte) []byte {
+	return append(append(append(make([]byte, 0, len(b)+len(wrapper[0])+len(wrapper[1])), wrapper[0]...), b...), wrapper[1]...)
+}
+
 func (vm *Otto) load(call otto.FunctionCall) otto.Value {
 	id, err := vm.toString("id", call.Argument(0))
 	if err != nil {
@@ -133,10 +137,6 @@ func (vm *Otto) load(call otto.FunctionCall) otto.Value {
 	}
 	v, _ := vm.ToValue(string(b))
 	return v
-}
-
-func (vm *Otto) wrap(b []byte) []byte {
-	return append(append(append(make([]byte, 0, len(b)+len(wrapper[0])+len(wrapper[1])), wrapper[0]...), b...), wrapper[1]...)
 }
 
 func (vm *Otto) resolve(call otto.FunctionCall) otto.Value {
@@ -164,12 +164,12 @@ func (vm *Otto) resolve(call otto.FunctionCall) otto.Value {
 func (vm *Otto) process() otto.Value {
 	v, _ := vm.Run([]byte("(function() {\nfunction process() {\n}\nreturn new process();\n})();"))
 	o := v.Object()
+	o.Set("binding", vm.binding)
 	if runtime.GOOS == "windows" {
 		o.Set("platform", "win32")
 	} else {
 		o.Set("platform", runtime.GOOS)
 	}
-	o.Set("binding", vm.binding)
 	return v
 }
 
