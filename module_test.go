@@ -1,7 +1,7 @@
 //
 // otto.module :: module_test.go
 //
-//   Copyright (c) 2017 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2018 Akinori Hattori <hattya@gmail.com>
 //
 //   Permission is hereby granted, free of charge, to any person
 //   obtaining a copy of this software and associated documentation files
@@ -589,6 +589,33 @@ func TestBinding_VMError(t *testing.T) {
 		if _, err := vm.Run(src); err == nil {
 			t.Errorf("%v: expected error", strings.Trim(src, ";"))
 		}
+	}
+}
+
+func TestEnv_Get(t *testing.T) {
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(module.Wrap(err))
+	}
+
+	k := "__OTTO_MODULE__"
+	fn := "process.env.__get__"
+	if err := os.Setenv(k, fn); err != nil {
+		t.Fatal(err)
+	}
+
+	src := fmt.Sprintf(`%v(%q);`, fn, k)
+	if v, err := vm.Run(src); err != nil {
+		t.Error(module.Wrap(err))
+	} else {
+		s, _ := v.ToString()
+		if g, e := s, fn; g != e {
+			t.Errorf("%v = %q, expected %q", strings.Trim(src, ";"), g, e)
+		}
+	}
+
+	if _, err := vm.Run(fmt.Sprintf(`%v();`, fn)); err == nil {
+		t.Error("expected error")
 	}
 }
 

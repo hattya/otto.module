@@ -30,6 +30,7 @@ package module
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"sync"
@@ -165,6 +166,9 @@ func (vm *Otto) process() otto.Value {
 	v, _ := vm.Run([]byte("(function() {\nfunction process() {\n}\nreturn new process();\n})();"))
 	o := v.Object()
 	o.Set("binding", vm.binding)
+	env, _ := vm.Object(`({})`)
+	env.Set("__get__", vm.env_get)
+	o.Set("env", env)
 	if runtime.GOOS == "windows" {
 		o.Set("platform", "win32")
 	} else {
@@ -183,6 +187,16 @@ func (vm *Otto) binding(call otto.FunctionCall) otto.Value {
 	if err != nil {
 		return vm.throw(err)
 	}
+	return v
+}
+
+func (vm *Otto) env_get(call otto.FunctionCall) otto.Value {
+	k, err := vm.toString("key", call.Argument(0))
+	if err != nil {
+		return vm.throw(err)
+	}
+
+	v, _ := vm.ToValue(os.Getenv(k))
 	return v
 }
 
