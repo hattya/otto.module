@@ -619,6 +619,33 @@ func TestEnv_Get(t *testing.T) {
 	}
 }
 
+func TestEnv_Set(t *testing.T) {
+	vm, err := module.New()
+	if err != nil {
+		t.Fatal(module.Wrap(err))
+	}
+
+	k := "__OTTO_MODULE__"
+	fn := "process.env.__set__"
+
+	src := fmt.Sprintf(`%v(%q, %q);`, fn, k, fn)
+	if _, err := vm.Run(src); err != nil {
+		t.Error(module.Wrap(err))
+	} else if g, e := os.Getenv(k), fn; g != e {
+		t.Errorf("expected %v, got %v", e, g)
+	}
+
+	for _, src := range []string{
+		fmt.Sprintf(`%v();`, fn),
+		fmt.Sprintf(`%v(%q);`, fn, k),
+		fmt.Sprintf(`%v(%q, %q);`, fn, "="+k+"=", fn),
+	} {
+		if _, err := vm.Run(src); err == nil {
+			t.Errorf("%v: expected error", strings.Trim(src, ";"))
+		}
+	}
+}
+
 func TestThrow(t *testing.T) {
 	vm, err := module.New()
 	if err != nil {
