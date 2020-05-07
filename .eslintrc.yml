@@ -10,6 +10,7 @@ parserOptions:
 
 rules:
   # Best Practices
+  no-else-return: off
   no-eval: off
   no-param-reassign: off
   no-unused-expressions: warn

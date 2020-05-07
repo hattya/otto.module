@@ -1,7 +1,7 @@
 //
 // otto.module :: path.spec.js
 //
-//   Copyright (c) 2017 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2020 Akinori Hattori <hattya@gmail.com>
 //
 //   Permission is hereby granted, free of charge, to any person
 //   obtaining a copy of this software and associated documentation files
@@ -793,7 +793,7 @@ describe('path', () => {
           ].forEach((tt) => {
             assert.deepEqual(win32.parse(tt.path), tt.obj);
 
-            const obj = Object.assign({}, tt.obj);
+            const obj = { ...tt.obj };
             obj.root = obj.root.replace(/\\/g, '/');
             obj.dir = obj.dir.replace(/\\/g, '/');
             assert.deepEqual(win32.parse(tt.path.replace(/\\/g, '/')), obj);
@@ -918,7 +918,7 @@ describe('path', () => {
         ].forEach((tt) => {
           assert.deepEqual(win32.parse(tt.path), tt.obj);
 
-          const obj = Object.assign({}, tt.obj);
+          const obj = { ...tt.obj };
           obj.root = obj.root.replace(/\\/g, '/');
           obj.dir = obj.dir.replace(/\\/g, '/');
           assert.deepEqual(win32.parse(tt.path.replace(/\\/g, '/')), obj);

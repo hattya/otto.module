@@ -8,15 +8,16 @@
     "url": "https://github.com/hattya/otto.module"
   },
   "scripts": {
-    "test": "nyc mocha --require babel-register",
+    "test": "nyc mocha --require @babel/register",
     "cover": "nyc --reporter=lcov npm test",
     "lint": "eslint lib test"
   },
   "devDependencies": {
-    "babel-preset-env": "latest",
-    "babel-register": "latest",
+    "@babel/core": "latest",
+    "@babel/preset-env": "latest",
+    "@babel/register": "latest",
     "eslint": "latest",
-    "eslint-config-airbnb-base": "latest",
+    "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "latest",
     "mocha": "latest",
     "nyc": "latest",
