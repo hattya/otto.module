@@ -3,4 +3,4 @@ extends:
   - airbnb-base
 
 env:
-  mocha: true
+  jest: true

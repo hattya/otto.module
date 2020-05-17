@@ -6,7 +6,6 @@
 //   SPDX-License-Identifier: MIT
 //
 
-const assert = require('power-assert');
 const path = require('../lib/path');
 
 describe('path', () => {
@@ -15,221 +14,221 @@ describe('path', () => {
 
     describe('.basename()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => posix.basename(true), TypeError);
-        assert.throws(() => posix.basename(0), TypeError);
-        assert.throws(() => posix.basename({}), TypeError);
-        assert.throws(() => posix.basename('', true), TypeError);
-        assert.throws(() => posix.basename('', 0), TypeError);
-        assert.throws(() => posix.basename('', {}), TypeError);
+        expect(() => posix.basename(true)).toThrow(TypeError);
+        expect(() => posix.basename(0)).toThrow(TypeError);
+        expect(() => posix.basename({})).toThrow(TypeError);
+        expect(() => posix.basename('', true)).toThrow(TypeError);
+        expect(() => posix.basename('', 0)).toThrow(TypeError);
+        expect(() => posix.basename('', {})).toThrow(TypeError);
       });
 
       it('should return the last portion of a path', () => {
-        assert.equal(posix.basename('/foo/bar///'), 'bar');
-        assert.equal(posix.basename('/foo/bar.html'), 'bar.html');
-        assert.equal(posix.basename('/foo/bar.html', '.html'), 'bar');
+        expect(posix.basename('/foo/bar///')).toBe('bar');
+        expect(posix.basename('/foo/bar.html')).toBe('bar.html');
+        expect(posix.basename('/foo/bar.html', '.html')).toBe('bar');
 
-        assert.equal(posix.basename('/'), '');
+        expect(posix.basename('/')).toBe('');
 
-        assert.equal(posix.basename(''), '');
-        assert.equal(posix.basename('.'), '');
-        assert.equal(posix.basename('..'), '');
+        expect(posix.basename('')).toBe('');
+        expect(posix.basename('.')).toBe('');
+        expect(posix.basename('..')).toBe('');
       });
     });
 
     describe('.delimiter', () => {
       it('is ":"', () => {
-        assert.equal(posix.delimiter, ':');
+        expect(posix.delimiter).toBe(':');
       });
     });
 
     describe('.dirname()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => posix.dirname(true), TypeError);
-        assert.throws(() => posix.dirname(0), TypeError);
-        assert.throws(() => posix.dirname({}), TypeError);
+        expect(() => posix.dirname(true)).toThrow(TypeError);
+        expect(() => posix.dirname(0)).toThrow(TypeError);
+        expect(() => posix.dirname({})).toThrow(TypeError);
       });
 
       it('should return the directory name of a path', () => {
-        assert.equal(posix.dirname('/foo/bar///'), '/foo');
-        assert.equal(posix.dirname('/foo/bar'), '/foo');
+        expect(posix.dirname('/foo/bar///')).toBe('/foo');
+        expect(posix.dirname('/foo/bar')).toBe('/foo');
 
-        assert.equal(posix.dirname('/'), '/');
+        expect(posix.dirname('/')).toBe('/');
 
-        assert.equal(posix.dirname('foo/bar///'), 'foo');
-        assert.equal(posix.dirname('foo/bar'), 'foo');
+        expect(posix.dirname('foo/bar///')).toBe('foo');
+        expect(posix.dirname('foo/bar')).toBe('foo');
 
-        assert.equal(posix.dirname('foo'), '.');
+        expect(posix.dirname('foo')).toBe('.');
 
-        assert.equal(posix.dirname(''), '.');
-        assert.equal(posix.dirname('.'), '.');
-        assert.equal(posix.dirname('..'), '.');
+        expect(posix.dirname('')).toBe('.');
+        expect(posix.dirname('.')).toBe('.');
+        expect(posix.dirname('..')).toBe('.');
       });
     });
 
     describe('.extname()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => posix.extname(true), TypeError);
-        assert.throws(() => posix.extname(0), TypeError);
-        assert.throws(() => posix.extname({}), TypeError);
+        expect(() => posix.extname(true)).toThrow(TypeError);
+        expect(() => posix.extname(0)).toThrow(TypeError);
+        expect(() => posix.extname({})).toThrow(TypeError);
       });
 
       it('should return the extension of a path', () => {
-        assert.equal(posix.extname('index.js'), '.js');
-        assert.equal(posix.extname('index.js.md'), '.md');
-        assert.equal(posix.extname('index.'), '.');
-        assert.equal(posix.extname('index'), '');
-        assert.equal(posix.extname('.index'), '');
+        expect(posix.extname('index.js')).toBe('.js');
+        expect(posix.extname('index.js.md')).toBe('.md');
+        expect(posix.extname('index.')).toBe('.');
+        expect(posix.extname('index')).toBe('');
+        expect(posix.extname('.index')).toBe('');
 
-        assert.equal(posix.extname('/foo/bar/.index'), '');
+        expect(posix.extname('/foo/bar/.index')).toBe('');
       });
     });
 
     describe('.format()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => posix.format(null), TypeError);
-        assert.throws(() => posix.format(undefined), TypeError);
-        assert.throws(() => posix.format(true), TypeError);
-        assert.throws(() => posix.format(0), TypeError);
+        expect(() => posix.format(null)).toThrow(TypeError);
+        expect(() => posix.format(undefined)).toThrow(TypeError);
+        expect(() => posix.format(true)).toThrow(TypeError);
+        expect(() => posix.format(0)).toThrow(TypeError);
       });
 
       it('should return a path from an object', () => {
-        assert.equal(posix.format({
-        }), '');
-        assert.equal(posix.format({
+        expect(posix.format({
+        })).toBe('');
+        expect(posix.format({
           root: '/',
-        }), '/');
-        assert.equal(posix.format({
+        })).toBe('/');
+        expect(posix.format({
           root: '/',
           dir: '/',
-        }), '/');
-        assert.equal(posix.format({
+        })).toBe('/');
+        expect(posix.format({
           root: '/',
           dir: '/foo',
           base: 'bar.html',
-        }), '/foo/bar.html');
-        assert.equal(posix.format({
+        })).toBe('/foo/bar.html');
+        expect(posix.format({
           root: '/',
           dir: '/foo',
           name: 'bar',
           ext: '.html',
-        }), '/foo/bar.html');
+        })).toBe('/foo/bar.html');
       });
     });
 
     describe('.isAbsolute()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => posix.isAbsolute(true), TypeError);
-        assert.throws(() => posix.isAbsolute(0), TypeError);
-        assert.throws(() => posix.isAbsolute({}), TypeError);
+        expect(() => posix.isAbsolute(true)).toThrow(TypeError);
+        expect(() => posix.isAbsolute(0)).toThrow(TypeError);
+        expect(() => posix.isAbsolute({})).toThrow(TypeError);
       });
 
       it('should return true', () => {
-        assert.ok(posix.isAbsolute('/'));
+        expect(posix.isAbsolute('/')).toBe(true);
       });
 
       it('should return false', () => {
-        assert.ok(!posix.isAbsolute(''));
-        assert.ok(!posix.isAbsolute('.'));
-        assert.ok(!posix.isAbsolute('..'));
+        expect(posix.isAbsolute('')).toBe(false);
+        expect(posix.isAbsolute('.')).toBe(false);
+        expect(posix.isAbsolute('..')).toBe(false);
       });
     });
 
     describe('.join()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => posix.join(true), TypeError);
-        assert.throws(() => posix.join(0), TypeError);
-        assert.throws(() => posix.join({}), TypeError);
+        expect(() => posix.join(true)).toThrow(TypeError);
+        expect(() => posix.join(0)).toThrow(TypeError);
+        expect(() => posix.join({})).toThrow(TypeError);
       });
 
       it('should return "."', () => {
-        assert.equal(posix.join(''), '.');
-        assert.equal(posix.join('', ''), '.');
+        expect(posix.join('')).toBe('.');
+        expect(posix.join('', '')).toBe('.');
       });
 
       it('should return an absolute path', () => {
-        assert.equal(posix.join('/foo', '/bar///'), '/foo/bar/');
-        assert.equal(posix.join('/foo', '/bar', '///'), '/foo/bar/');
-        assert.equal(posix.join('/foo', '/bar'), '/foo/bar');
-        assert.equal(posix.join('/foo', '/bar', 'baz', '..'), '/foo/bar');
+        expect(posix.join('/foo', '/bar///')).toBe('/foo/bar/');
+        expect(posix.join('/foo', '/bar', '///')).toBe('/foo/bar/');
+        expect(posix.join('/foo', '/bar')).toBe('/foo/bar');
+        expect(posix.join('/foo', '/bar', 'baz', '..')).toBe('/foo/bar');
 
-        assert.equal(posix.join('/foo', 'bar///'), '/foo/bar/');
-        assert.equal(posix.join('/foo', 'bar', '///'), '/foo/bar/');
-        assert.equal(posix.join('/foo', 'bar'), '/foo/bar');
-        assert.equal(posix.join('/foo', 'bar', 'baz', '..'), '/foo/bar');
+        expect(posix.join('/foo', 'bar///')).toBe('/foo/bar/');
+        expect(posix.join('/foo', 'bar', '///')).toBe('/foo/bar/');
+        expect(posix.join('/foo', 'bar')).toBe('/foo/bar');
+        expect(posix.join('/foo', 'bar', 'baz', '..')).toBe('/foo/bar');
       });
 
       it('should return a relative path', () => {
-        assert.equal(posix.join('foo', '/bar///'), 'foo/bar/');
-        assert.equal(posix.join('foo', '/bar', '///'), 'foo/bar/');
-        assert.equal(posix.join('foo', '/bar'), 'foo/bar');
-        assert.equal(posix.join('foo', '/bar', 'baz', '..'), 'foo/bar');
+        expect(posix.join('foo', '/bar///')).toBe('foo/bar/');
+        expect(posix.join('foo', '/bar', '///')).toBe('foo/bar/');
+        expect(posix.join('foo', '/bar')).toBe('foo/bar');
+        expect(posix.join('foo', '/bar', 'baz', '..')).toBe('foo/bar');
 
-        assert.equal(posix.join('..', 'foo', '..', '/bar///'), '../bar/');
-        assert.equal(posix.join('..', 'foo', '..', '/bar', '///'), '../bar/');
-        assert.equal(posix.join('..', 'foo', '..', '/bar'), '../bar');
-        assert.equal(posix.join('..', 'foo', '..', '/bar', 'baz', '..'), '../bar');
+        expect(posix.join('..', 'foo', '..', '/bar///')).toBe('../bar/');
+        expect(posix.join('..', 'foo', '..', '/bar', '///')).toBe('../bar/');
+        expect(posix.join('..', 'foo', '..', '/bar')).toBe('../bar');
+        expect(posix.join('..', 'foo', '..', '/bar', 'baz', '..')).toBe('../bar');
       });
     });
 
     describe('.normalize()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => posix.parse(true), TypeError);
-        assert.throws(() => posix.parse(0), TypeError);
-        assert.throws(() => posix.parse({}), TypeError);
+        expect(() => posix.parse(true)).toThrow(TypeError);
+        expect(() => posix.parse(0)).toThrow(TypeError);
+        expect(() => posix.parse({})).toThrow(TypeError);
       });
 
       it('should return "."', () => {
-        assert.equal(posix.normalize(''), '.');
-        assert.equal(posix.normalize('./'), './');
-        assert.equal(posix.normalize('.'), '.');
+        expect(posix.normalize('')).toBe('.');
+        expect(posix.normalize('./')).toBe('./');
+        expect(posix.normalize('.')).toBe('.');
       });
 
       it('should return an absolute path', () => {
-        assert.equal(posix.normalize('/foo/./bar/..///'), '/foo/');
-        assert.equal(posix.normalize('/foo/./bar/..'), '/foo');
-        assert.equal(posix.normalize('/foo/./bar/.././../..'), '/');
+        expect(posix.normalize('/foo/./bar/..///')).toBe('/foo/');
+        expect(posix.normalize('/foo/./bar/..')).toBe('/foo');
+        expect(posix.normalize('/foo/./bar/.././../..')).toBe('/');
 
-        assert.equal(posix.normalize('/foo/.././../.bar'), '/.bar');
-        assert.equal(posix.normalize('/foo/.././../..bar'), '/..bar');
-        assert.equal(posix.normalize('/foo/.././../bar.'), '/bar.');
-        assert.equal(posix.normalize('/foo/.././../bar..'), '/bar..');
+        expect(posix.normalize('/foo/.././../.bar')).toBe('/.bar');
+        expect(posix.normalize('/foo/.././../..bar')).toBe('/..bar');
+        expect(posix.normalize('/foo/.././../bar.')).toBe('/bar.');
+        expect(posix.normalize('/foo/.././../bar..')).toBe('/bar..');
       });
 
       it('should return a relative path', () => {
-        assert.equal(posix.normalize('foo/./bar///'), 'foo/bar/');
-        assert.equal(posix.normalize('foo/./bar'), 'foo/bar');
+        expect(posix.normalize('foo/./bar///')).toBe('foo/bar/');
+        expect(posix.normalize('foo/./bar')).toBe('foo/bar');
 
-        assert.equal(posix.normalize('foo/./.bar'), 'foo/.bar');
-        assert.equal(posix.normalize('foo/./..bar'), 'foo/..bar');
-        assert.equal(posix.normalize('foo/./bar.'), 'foo/bar.');
-        assert.equal(posix.normalize('foo/./bar..'), 'foo/bar..');
+        expect(posix.normalize('foo/./.bar')).toBe('foo/.bar');
+        expect(posix.normalize('foo/./..bar')).toBe('foo/..bar');
+        expect(posix.normalize('foo/./bar.')).toBe('foo/bar.');
+        expect(posix.normalize('foo/./bar..')).toBe('foo/bar..');
 
-        assert.equal(posix.normalize('./.././../foo/./.././/bar///'), '../../bar/');
-        assert.equal(posix.normalize('./.././../foo/./.././bar'), '../../bar');
+        expect(posix.normalize('./.././../foo/./.././/bar///')).toBe('../../bar/');
+        expect(posix.normalize('./.././../foo/./.././bar')).toBe('../../bar');
 
-        assert.equal(posix.normalize('./../foo/.././.bar'), '../.bar');
-        assert.equal(posix.normalize('./../foo/.././..bar'), '../..bar');
-        assert.equal(posix.normalize('./../foo/.././bar.'), '../bar.');
-        assert.equal(posix.normalize('./../foo/.././bar..'), '../bar..');
+        expect(posix.normalize('./../foo/.././.bar')).toBe('../.bar');
+        expect(posix.normalize('./../foo/.././..bar')).toBe('../..bar');
+        expect(posix.normalize('./../foo/.././bar.')).toBe('../bar.');
+        expect(posix.normalize('./../foo/.././bar..')).toBe('../bar..');
       });
     });
 
     describe('.parse()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => posix.parse(true), TypeError);
-        assert.throws(() => posix.parse(0), TypeError);
-        assert.throws(() => posix.parse({}), TypeError);
+        expect(() => posix.parse(true)).toThrow(TypeError);
+        expect(() => posix.parse(0)).toThrow(TypeError);
+        expect(() => posix.parse({})).toThrow(TypeError);
       });
 
       it('should return an object of an absolute path', () => {
-        assert.deepEqual(posix.parse('/foo/bar///'), {
+        expect(posix.parse('/foo/bar///')).toEqual({
           root: '/',
           dir: '/foo',
           base: 'bar',
           name: 'bar',
           ext: '',
         });
-        assert.deepEqual(posix.parse('/foo/bar'), {
+        expect(posix.parse('/foo/bar')).toEqual({
           root: '/',
           dir: '/foo',
           base: 'bar',
@@ -237,35 +236,35 @@ describe('path', () => {
           ext: '',
         });
 
-        assert.deepEqual(posix.parse('/foo/bar/index.js'), {
+        expect(posix.parse('/foo/bar/index.js')).toEqual({
           root: '/',
           dir: '/foo/bar',
           base: 'index.js',
           name: 'index',
           ext: '.js',
         });
-        assert.deepEqual(posix.parse('/foo/bar/index.js.md'), {
+        expect(posix.parse('/foo/bar/index.js.md')).toEqual({
           root: '/',
           dir: '/foo/bar',
           base: 'index.js.md',
           name: 'index.js',
           ext: '.md',
         });
-        assert.deepEqual(posix.parse('/foo/bar/index.'), {
+        expect(posix.parse('/foo/bar/index.')).toEqual({
           root: '/',
           dir: '/foo/bar',
           base: 'index.',
           name: 'index.',
           ext: '',
         });
-        assert.deepEqual(posix.parse('/foo/bar/index'), {
+        expect(posix.parse('/foo/bar/index')).toEqual({
           root: '/',
           dir: '/foo/bar',
           base: 'index',
           name: 'index',
           ext: '',
         });
-        assert.deepEqual(posix.parse('/foo/bar/.index'), {
+        expect(posix.parse('/foo/bar/.index')).toEqual({
           root: '/',
           dir: '/foo/bar',
           base: '.index',
@@ -273,7 +272,7 @@ describe('path', () => {
           ext: '',
         });
 
-        assert.deepEqual(posix.parse('/'), {
+        expect(posix.parse('/')).toEqual({
           root: '/',
           dir: '/',
           base: '',
@@ -283,21 +282,21 @@ describe('path', () => {
       });
 
       it('should return an object of a relative path', () => {
-        assert.deepEqual(posix.parse('foo.js'), {
+        expect(posix.parse('foo.js')).toEqual({
           root: '',
           dir: '',
           base: 'foo.js',
           name: 'foo',
           ext: '.js',
         });
-        assert.deepEqual(posix.parse('./foo.js'), {
+        expect(posix.parse('./foo.js')).toEqual({
           root: '',
           dir: '.',
           base: 'foo.js',
           name: 'foo',
           ext: '.js',
         });
-        assert.deepEqual(posix.parse('../foo.js'), {
+        expect(posix.parse('../foo.js')).toEqual({
           root: '',
           dir: '..',
           base: 'foo.js',
@@ -305,35 +304,35 @@ describe('path', () => {
           ext: '.js',
         });
 
-        assert.deepEqual(posix.parse('../index.js'), {
+        expect(posix.parse('../index.js')).toEqual({
           root: '',
           dir: '..',
           base: 'index.js',
           name: 'index',
           ext: '.js',
         });
-        assert.deepEqual(posix.parse('../index.js.md'), {
+        expect(posix.parse('../index.js.md')).toEqual({
           root: '',
           dir: '..',
           base: 'index.js.md',
           name: 'index.js',
           ext: '.md',
         });
-        assert.deepEqual(posix.parse('../index.'), {
+        expect(posix.parse('../index.')).toEqual({
           root: '',
           dir: '..',
           base: 'index.',
           name: 'index.',
           ext: '',
         });
-        assert.deepEqual(posix.parse('../index'), {
+        expect(posix.parse('../index')).toEqual({
           root: '',
           dir: '..',
           base: 'index',
           name: 'index',
           ext: '',
         });
-        assert.deepEqual(posix.parse('../.index'), {
+        expect(posix.parse('../.index')).toEqual({
           root: '',
           dir: '..',
           base: '.index',
@@ -341,21 +340,21 @@ describe('path', () => {
           ext: '',
         });
 
-        assert.deepEqual(posix.parse(''), {
+        expect(posix.parse('')).toEqual({
           root: '',
           dir: '',
           base: '',
           name: '',
           ext: '',
         });
-        assert.deepEqual(posix.parse('.'), {
+        expect(posix.parse('.')).toEqual({
           root: '',
           dir: '',
           base: '.',
           name: '.',
           ext: '',
         });
-        assert.deepEqual(posix.parse('..'), {
+        expect(posix.parse('..')).toEqual({
           root: '',
           dir: '',
           base: '..',
@@ -367,19 +366,19 @@ describe('path', () => {
 
     describe('.posix', () => {
       it('is path.posix', () => {
-        assert.equal(posix.posix, path.posix);
+        expect(posix.posix).toBe(path.posix);
       });
     });
 
     describe('.sep', () => {
       it('is "/"', () => {
-        assert.equal(posix.sep, '/');
+        expect(posix.sep).toBe('/');
       });
     });
 
     describe('.win32', () => {
       it('is path.win32', () => {
-        assert.equal(posix.win32, path.win32);
+        expect(posix.win32).toBe(path.win32);
       });
     });
   });
@@ -389,302 +388,302 @@ describe('path', () => {
 
     describe('.basename()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => win32.basename(true), TypeError);
-        assert.throws(() => win32.basename(0), TypeError);
-        assert.throws(() => win32.basename({}), TypeError);
-        assert.throws(() => win32.basename('', true), TypeError);
-        assert.throws(() => win32.basename('', 0), TypeError);
-        assert.throws(() => win32.basename('', {}), TypeError);
+        expect(() => win32.basename(true)).toThrow(TypeError);
+        expect(() => win32.basename(0)).toThrow(TypeError);
+        expect(() => win32.basename({})).toThrow(TypeError);
+        expect(() => win32.basename('').toThrow(true)).toThrow(TypeError);
+        expect(() => win32.basename('').toThrow(0)).toThrow(TypeError);
+        expect(() => win32.basename('').toThrow({})).toThrow(TypeError);
       });
 
       it('should return the last portion of a path', () => {
         ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share'].forEach((v) => {
-          assert.equal(win32.basename(`${v}\\foo\\bar\\\\\\`), 'bar');
-          assert.equal(win32.basename(`${v}/foo/bar///`), 'bar');
-          assert.equal(win32.basename(`${v}\\foo\\bar.html`), 'bar.html');
-          assert.equal(win32.basename(`${v}/foo/bar.html`), 'bar.html');
-          assert.equal(win32.basename(`${v}\\foo\\bar.html`, '.html'), 'bar');
-          assert.equal(win32.basename(`${v}/foo/bar.html`, '.html'), 'bar');
+          expect(win32.basename(`${v}\\foo\\bar\\\\\\`)).toBe('bar');
+          expect(win32.basename(`${v}/foo/bar///`)).toBe('bar');
+          expect(win32.basename(`${v}\\foo\\bar.html`)).toBe('bar.html');
+          expect(win32.basename(`${v}/foo/bar.html`)).toBe('bar.html');
+          expect(win32.basename(`${v}\\foo\\bar.html`, '.html')).toBe('bar');
+          expect(win32.basename(`${v}/foo/bar.html`, '.html')).toBe('bar');
 
-          assert.equal(win32.basename(`${v}\\`), '');
-          assert.equal(win32.basename(`${v}/`), '');
+          expect(win32.basename(`${v}\\`)).toBe('');
+          expect(win32.basename(`${v}/`)).toBe('');
 
-          assert.equal(win32.basename(`${v}`), '');
+          expect(win32.basename(`${v}`)).toBe('');
         });
 
-        assert.equal(win32.basename(''), '');
-        assert.equal(win32.basename('.'), '');
-        assert.equal(win32.basename('..'), '');
+        expect(win32.basename('')).toBe('');
+        expect(win32.basename('.')).toBe('');
+        expect(win32.basename('..')).toBe('');
       });
     });
 
     describe('.delimiter', () => {
       it('is ";"', () => {
-        assert.equal(win32.delimiter, ';');
+        expect(win32.delimiter).toBe(';');
       });
     });
 
     describe('.dirname()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => win32.dirname(true), TypeError);
-        assert.throws(() => win32.dirname(0), TypeError);
-        assert.throws(() => win32.dirname({}), TypeError);
+        expect(() => win32.dirname(true)).toThrow(TypeError);
+        expect(() => win32.dirname(0)).toThrow(TypeError);
+        expect(() => win32.dirname({})).toThrow(TypeError);
       });
 
       it('should return the directory name of a path', () => {
         ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share'].forEach((v) => {
-          assert.equal(win32.dirname(`${v}\\foo\\bar\\\\\\`), `${v}\\foo`);
-          assert.equal(win32.dirname(`${v}/foo/bar///`), `${v}/foo`);
-          assert.equal(win32.dirname(`${v}\\foo\\bar`), `${v}\\foo`);
-          assert.equal(win32.dirname(`${v}/foo/bar`), `${v}/foo`);
+          expect(win32.dirname(`${v}\\foo\\bar\\\\\\`)).toBe(`${v}\\foo`);
+          expect(win32.dirname(`${v}/foo/bar///`)).toBe(`${v}/foo`);
+          expect(win32.dirname(`${v}\\foo\\bar`)).toBe(`${v}\\foo`);
+          expect(win32.dirname(`${v}/foo/bar`)).toBe(`${v}/foo`);
 
-          assert.equal(win32.dirname(`${v}\\`), `${v}\\`);
-          assert.equal(win32.dirname(`${v}/`), `${v}/`);
+          expect(win32.dirname(`${v}\\`)).toBe(`${v}\\`);
+          expect(win32.dirname(`${v}/`)).toBe(`${v}/`);
 
-          assert.equal(win32.dirname(v), v || '.');
+          expect(win32.dirname(v)).toBe(v || '.');
         });
 
-        assert.equal(win32.dirname('foo\\bar\\\\\\'), 'foo');
-        assert.equal(win32.dirname('foo/bar///'), 'foo');
-        assert.equal(win32.dirname('foo\\bar'), 'foo');
-        assert.equal(win32.dirname('foo/bar'), 'foo');
+        expect(win32.dirname('foo\\bar\\\\\\')).toBe('foo');
+        expect(win32.dirname('foo/bar///')).toBe('foo');
+        expect(win32.dirname('foo\\bar')).toBe('foo');
+        expect(win32.dirname('foo/bar')).toBe('foo');
 
-        assert.equal(win32.dirname('foo'), '.');
+        expect(win32.dirname('foo')).toBe('.');
 
-        assert.equal(win32.dirname(''), '.');
-        assert.equal(win32.dirname('.'), '.');
-        assert.equal(win32.dirname('..'), '.');
+        expect(win32.dirname('')).toBe('.');
+        expect(win32.dirname('.')).toBe('.');
+        expect(win32.dirname('..')).toBe('.');
       });
     });
 
     describe('.extname()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => win32.extname(true), TypeError);
-        assert.throws(() => win32.extname(0), TypeError);
-        assert.throws(() => win32.extname({}), TypeError);
+        expect(() => win32.extname(true)).toThrow(TypeError);
+        expect(() => win32.extname(0)).toThrow(TypeError);
+        expect(() => win32.extname({})).toThrow(TypeError);
       });
 
       it('should return the extension of a path', () => {
         ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share'].forEach((v) => {
-          assert.equal(win32.extname(`${v}\\index.js`), '.js');
-          assert.equal(win32.extname(`${v}\\index.js.md`), '.md');
-          assert.equal(win32.extname(`${v}\\index.`), '.');
-          assert.equal(win32.extname(`${v}\\index`), '');
-          assert.equal(win32.extname(`${v}\\.index`), '');
+          expect(win32.extname(`${v}\\index.js`)).toBe('.js');
+          expect(win32.extname(`${v}\\index.js.md`)).toBe('.md');
+          expect(win32.extname(`${v}\\index.`)).toBe('.');
+          expect(win32.extname(`${v}\\index`)).toBe('');
+          expect(win32.extname(`${v}\\.index`)).toBe('');
         });
       });
     });
 
     describe('.format()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => win32.format(null), TypeError);
-        assert.throws(() => win32.format(undefined), TypeError);
-        assert.throws(() => win32.format(true), TypeError);
-        assert.throws(() => win32.format(0), TypeError);
+        expect(() => win32.format(null)).toThrow(TypeError);
+        expect(() => win32.format(undefined)).toThrow(TypeError);
+        expect(() => win32.format(true)).toThrow(TypeError);
+        expect(() => win32.format(0)).toThrow(TypeError);
       });
 
       it('should return a path from an object', () => {
-        assert.equal(win32.format({
-        }), '');
-        assert.equal(win32.format({
+        expect(win32.format({
+        })).toBe('');
+        expect(win32.format({
           root: '\\',
-        }), '\\');
-        assert.equal(win32.format({
+        })).toBe('\\');
+        expect(win32.format({
           root: '/',
-        }), '/');
-        assert.equal(win32.format({
+        })).toBe('/');
+        expect(win32.format({
           root: '\\',
           dir: '\\',
-        }), '\\');
-        assert.equal(win32.format({
+        })).toBe('\\');
+        expect(win32.format({
           root: '/',
           dir: '/',
-        }), '/');
-        assert.equal(win32.format({
+        })).toBe('/');
+        expect(win32.format({
           root: '\\',
           dir: '\\foo',
           base: 'bar.html',
-        }), '\\foo\\bar.html');
-        assert.equal(win32.format({
+        })).toBe('\\foo\\bar.html');
+        expect(win32.format({
           root: '/',
           dir: '/foo',
           base: 'bar.html',
-        }), '/foo\\bar.html');
-        assert.equal(win32.format({
+        })).toBe('/foo\\bar.html');
+        expect(win32.format({
           root: '\\',
           dir: '\\foo',
           name: 'bar',
           ext: '.html',
-        }), '\\foo\\bar.html');
-        assert.equal(win32.format({
+        })).toBe('\\foo\\bar.html');
+        expect(win32.format({
           root: '/',
           dir: '/foo',
           name: 'bar',
           ext: '.html',
-        }), '/foo\\bar.html');
+        })).toBe('/foo\\bar.html');
       });
     });
 
     describe('.isAbsolute()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => win32.isAbsolute(true), TypeError);
-        assert.throws(() => win32.isAbsolute(0), TypeError);
-        assert.throws(() => win32.isAbsolute({}), TypeError);
+        expect(() => win32.isAbsolute(true)).toThrow(TypeError);
+        expect(() => win32.isAbsolute(0)).toThrow(TypeError);
+        expect(() => win32.isAbsolute({})).toThrow(TypeError);
       });
 
       it('should return true', () => {
         ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share', '\\\\UNC', '//UNC'].forEach((v) => {
-          assert.ok(win32.isAbsolute(`${v}\\`));
-          assert.ok(win32.isAbsolute(`${v}/`));
+          expect(win32.isAbsolute(`${v}\\`)).toBe(true);
+          expect(win32.isAbsolute(`${v}/`)).toBe(true);
         });
       });
 
       it('should return false', () => {
         ['', 'C:', 'c:'].forEach((v) => {
-          assert.ok(!win32.isAbsolute(`${v}`));
-          assert.ok(!win32.isAbsolute(`${v}.`));
-          assert.ok(!win32.isAbsolute(`${v}..`));
+          expect(win32.isAbsolute(`${v}`)).toBe(false);
+          expect(win32.isAbsolute(`${v}.`)).toBe(false);
+          expect(win32.isAbsolute(`${v}..`)).toBe(false);
         });
       });
     });
 
     describe('.normalize()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => win32.normalize(true), TypeError);
-        assert.throws(() => win32.normalize(0), TypeError);
-        assert.throws(() => win32.normalize({}), TypeError);
+        expect(() => win32.normalize(true)).toThrow(TypeError);
+        expect(() => win32.normalize(0)).toThrow(TypeError);
+        expect(() => win32.normalize({})).toThrow(TypeError);
       });
 
       it('should return "."', () => {
         ['', 'C:', 'c:'].forEach((v) => {
-          assert.equal(win32.normalize(`${v}`), `${v}.`);
-          assert.equal(win32.normalize(`${v}.\\`), `${v}.\\`);
-          assert.equal(win32.normalize(`${v}./`), `${v}.\\`);
-          assert.equal(win32.normalize(`${v}.`), `${v}.`);
+          expect(win32.normalize(`${v}`)).toBe(`${v}.`);
+          expect(win32.normalize(`${v}.\\`)).toBe(`${v}.\\`);
+          expect(win32.normalize(`${v}./`)).toBe(`${v}.\\`);
+          expect(win32.normalize(`${v}.`)).toBe(`${v}.`);
         });
       });
 
       it('should return an absolute path', () => {
         ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share'].forEach((v) => {
           const w = v.replace(/\//g, '\\');
-          assert.equal(win32.normalize(`${v}\\foo\\.\\bar\\..\\\\\\`), `${w}\\foo\\`);
-          assert.equal(win32.normalize(`${v}/foo/./bar/..///`), `${w}\\foo\\`);
-          assert.equal(win32.normalize(`${v}\\foo\\.\\bar\\..`), `${w}\\foo`);
-          assert.equal(win32.normalize(`${v}/foo/./bar/..`), `${w}\\foo`);
-          assert.equal(win32.normalize(`${v}\\foo\\.\\bar\\..\\.\\..\\..`), `${w}\\`);
-          assert.equal(win32.normalize(`${v}/foo/./bar/.././../..`), `${w}\\`);
+          expect(win32.normalize(`${v}\\foo\\.\\bar\\..\\\\\\`)).toBe(`${w}\\foo\\`);
+          expect(win32.normalize(`${v}/foo/./bar/..///`)).toBe(`${w}\\foo\\`);
+          expect(win32.normalize(`${v}\\foo\\.\\bar\\..`)).toBe(`${w}\\foo`);
+          expect(win32.normalize(`${v}/foo/./bar/..`)).toBe(`${w}\\foo`);
+          expect(win32.normalize(`${v}\\foo\\.\\bar\\..\\.\\..\\..`)).toBe(`${w}\\`);
+          expect(win32.normalize(`${v}/foo/./bar/.././../..`)).toBe(`${w}\\`);
 
-          assert.equal(win32.normalize(`${v}\\foo\\..\\.\\..\\.bar`), `${w}\\.bar`);
-          assert.equal(win32.normalize(`${v}/foo/.././../.bar`), `${w}\\.bar`);
-          assert.equal(win32.normalize(`${v}\\foo\\..\\.\\..\\..bar`), `${w}\\..bar`);
-          assert.equal(win32.normalize(`${v}/foo/.././../..bar`), `${w}\\..bar`);
-          assert.equal(win32.normalize(`${v}\\foo\\..\\.\\..\\bar.`), `${w}\\bar.`);
-          assert.equal(win32.normalize(`${v}/foo/.././../bar.`), `${w}\\bar.`);
-          assert.equal(win32.normalize(`${v}\\foo\\..\\.\\..\\bar..`), `${w}\\bar..`);
-          assert.equal(win32.normalize(`${v}/foo/.././../bar..`), `${w}\\bar..`);
+          expect(win32.normalize(`${v}\\foo\\..\\.\\..\\.bar`)).toBe(`${w}\\.bar`);
+          expect(win32.normalize(`${v}/foo/.././../.bar`)).toBe(`${w}\\.bar`);
+          expect(win32.normalize(`${v}\\foo\\..\\.\\..\\..bar`)).toBe(`${w}\\..bar`);
+          expect(win32.normalize(`${v}/foo/.././../..bar`)).toBe(`${w}\\..bar`);
+          expect(win32.normalize(`${v}\\foo\\..\\.\\..\\bar.`)).toBe(`${w}\\bar.`);
+          expect(win32.normalize(`${v}/foo/.././../bar.`)).toBe(`${w}\\bar.`);
+          expect(win32.normalize(`${v}\\foo\\..\\.\\..\\bar..`)).toBe(`${w}\\bar..`);
+          expect(win32.normalize(`${v}/foo/.././../bar..`)).toBe(`${w}\\bar..`);
         });
 
-        assert.equal(win32.normalize('\\\\UNC\\share'), '\\\\UNC\\share\\');
-        assert.equal(win32.normalize('//UNC/share'), '\\\\UNC\\share\\');
+        expect(win32.normalize('\\\\UNC\\share')).toBe('\\\\UNC\\share\\');
+        expect(win32.normalize('//UNC/share')).toBe('\\\\UNC\\share\\');
       });
 
       it('should return a relative path', () => {
         ['', 'C:', 'c:'].forEach((v) => {
-          assert.equal(win32.normalize(`${v}foo\\.\\bar\\\\\\`), `${v}foo\\bar\\`);
-          assert.equal(win32.normalize(`${v}foo/./bar///`), `${v}foo\\bar\\`);
-          assert.equal(win32.normalize(`${v}foo\\.\\bar`), `${v}foo\\bar`);
-          assert.equal(win32.normalize(`${v}foo/./bar`), `${v}foo\\bar`);
+          expect(win32.normalize(`${v}foo\\.\\bar\\\\\\`)).toBe(`${v}foo\\bar\\`);
+          expect(win32.normalize(`${v}foo/./bar///`)).toBe(`${v}foo\\bar\\`);
+          expect(win32.normalize(`${v}foo\\.\\bar`)).toBe(`${v}foo\\bar`);
+          expect(win32.normalize(`${v}foo/./bar`)).toBe(`${v}foo\\bar`);
 
-          assert.equal(win32.normalize(`${v}foo\\.\\.bar`), `${v}foo\\.bar`);
-          assert.equal(win32.normalize(`${v}foo/./.bar`), `${v}foo\\.bar`);
-          assert.equal(win32.normalize(`${v}foo\\.\\..bar`), `${v}foo\\..bar`);
-          assert.equal(win32.normalize(`${v}foo/./..bar`), `${v}foo\\..bar`);
-          assert.equal(win32.normalize(`${v}foo\\.\\bar.`), `${v}foo\\bar.`);
-          assert.equal(win32.normalize(`${v}foo/./bar.`), `${v}foo\\bar.`);
-          assert.equal(win32.normalize(`${v}foo\\.\\bar..`), `${v}foo\\bar..`);
-          assert.equal(win32.normalize(`${v}foo/./bar..`), `${v}foo\\bar..`);
+          expect(win32.normalize(`${v}foo\\.\\.bar`)).toBe(`${v}foo\\.bar`);
+          expect(win32.normalize(`${v}foo/./.bar`)).toBe(`${v}foo\\.bar`);
+          expect(win32.normalize(`${v}foo\\.\\..bar`)).toBe(`${v}foo\\..bar`);
+          expect(win32.normalize(`${v}foo/./..bar`)).toBe(`${v}foo\\..bar`);
+          expect(win32.normalize(`${v}foo\\.\\bar.`)).toBe(`${v}foo\\bar.`);
+          expect(win32.normalize(`${v}foo/./bar.`)).toBe(`${v}foo\\bar.`);
+          expect(win32.normalize(`${v}foo\\.\\bar..`)).toBe(`${v}foo\\bar..`);
+          expect(win32.normalize(`${v}foo/./bar..`)).toBe(`${v}foo\\bar..`);
 
-          assert.equal(win32.normalize(`${v}.\\..\\.\\..\\foo\\.\\..\\.\\\\bar\\\\\\`), `${v}..\\..\\bar\\`);
-          assert.equal(win32.normalize(`${v}./.././../foo/./.././/bar///`), `${v}..\\..\\bar\\`);
-          assert.equal(win32.normalize(`${v}.\\..\\.\\..\\foo\\.\\..\\.\\bar`), `${v}..\\..\\bar`);
-          assert.equal(win32.normalize(`${v}./.././../foo/./.././bar`), `${v}..\\..\\bar`);
+          expect(win32.normalize(`${v}.\\..\\.\\..\\foo\\.\\..\\.\\\\bar\\\\\\`)).toBe(`${v}..\\..\\bar\\`);
+          expect(win32.normalize(`${v}./.././../foo/./.././/bar///`)).toBe(`${v}..\\..\\bar\\`);
+          expect(win32.normalize(`${v}.\\..\\.\\..\\foo\\.\\..\\.\\bar`)).toBe(`${v}..\\..\\bar`);
+          expect(win32.normalize(`${v}./.././../foo/./.././bar`)).toBe(`${v}..\\..\\bar`);
 
-          assert.equal(win32.normalize(`${v}.\\..\\foo\\..\\.\\.bar`), `${v}..\\.bar`);
-          assert.equal(win32.normalize(`${v}./../foo/.././.bar`), `${v}..\\.bar`);
-          assert.equal(win32.normalize(`${v}.\\..\\foo\\..\\.\\..bar`), `${v}..\\..bar`);
-          assert.equal(win32.normalize(`${v}./../foo/.././..bar`), `${v}..\\..bar`);
-          assert.equal(win32.normalize(`${v}.\\..\\foo\\..\\.\\bar.`), `${v}..\\bar.`);
-          assert.equal(win32.normalize(`${v}./../foo/.././bar.`), `${v}..\\bar.`);
-          assert.equal(win32.normalize(`${v}.\\..\\foo\\..\\.\\bar..`), `${v}..\\bar..`);
-          assert.equal(win32.normalize(`${v}./../foo/.././bar..`), `${v}..\\bar..`);
+          expect(win32.normalize(`${v}.\\..\\foo\\..\\.\\.bar`)).toBe(`${v}..\\.bar`);
+          expect(win32.normalize(`${v}./../foo/.././.bar`)).toBe(`${v}..\\.bar`);
+          expect(win32.normalize(`${v}.\\..\\foo\\..\\.\\..bar`)).toBe(`${v}..\\..bar`);
+          expect(win32.normalize(`${v}./../foo/.././..bar`)).toBe(`${v}..\\..bar`);
+          expect(win32.normalize(`${v}.\\..\\foo\\..\\.\\bar.`)).toBe(`${v}..\\bar.`);
+          expect(win32.normalize(`${v}./../foo/.././bar.`)).toBe(`${v}..\\bar.`);
+          expect(win32.normalize(`${v}.\\..\\foo\\..\\.\\bar..`)).toBe(`${v}..\\bar..`);
+          expect(win32.normalize(`${v}./../foo/.././bar..`)).toBe(`${v}..\\bar..`);
         });
       });
     });
 
     describe('.join()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => win32.join(true), TypeError);
-        assert.throws(() => win32.join(0), TypeError);
-        assert.throws(() => win32.join({}), TypeError);
+        expect(() => win32.join(true)).toThrow(TypeError);
+        expect(() => win32.join(0)).toThrow(TypeError);
+        expect(() => win32.join({})).toThrow(TypeError);
       });
 
       it('should return "."', () => {
-        assert.equal(win32.join(''), '.');
-        assert.equal(win32.join('', ''), '.');
+        expect(win32.join('')).toBe('.');
+        expect(win32.join('', '')).toBe('.');
       });
 
       it('should return an absolute path', () => {
         ['', 'C:', 'c:', '\\\\UNC\\share', '//UNC/share'].forEach((v) => {
           const w = v.replace(/\//g, '\\');
-          assert.equal(win32.join(v, '\\foo', '\\bar\\\\\\'), `${w}\\foo\\bar\\`);
-          assert.equal(win32.join(v, '/foo', '/bar///'), `${w}\\foo\\bar\\`);
-          assert.equal(win32.join(v, '\\foo', '\\bar', '\\\\\\'), `${w}\\foo\\bar\\`);
-          assert.equal(win32.join(v, '/foo', '/bar', '///'), `${w}\\foo\\bar\\`);
-          assert.equal(win32.join(v, '\\foo', '\\bar'), `${w}\\foo\\bar`);
-          assert.equal(win32.join(v, '/foo', '/bar'), `${w}\\foo\\bar`);
-          assert.equal(win32.join(v, '\\foo', '\\bar', 'baz', '..'), `${w}\\foo\\bar`);
-          assert.equal(win32.join(v, '/foo', '/bar', 'baz', '..'), `${w}\\foo\\bar`);
+          expect(win32.join(v, '\\foo', '\\bar\\\\\\')).toBe(`${w}\\foo\\bar\\`);
+          expect(win32.join(v, '/foo', '/bar///')).toBe(`${w}\\foo\\bar\\`);
+          expect(win32.join(v, '\\foo', '\\bar', '\\\\\\')).toBe(`${w}\\foo\\bar\\`);
+          expect(win32.join(v, '/foo', '/bar', '///')).toBe(`${w}\\foo\\bar\\`);
+          expect(win32.join(v, '\\foo', '\\bar')).toBe(`${w}\\foo\\bar`);
+          expect(win32.join(v, '/foo', '/bar')).toBe(`${w}\\foo\\bar`);
+          expect(win32.join(v, '\\foo', '\\bar', 'baz', '..')).toBe(`${w}\\foo\\bar`);
+          expect(win32.join(v, '/foo', '/bar', 'baz', '..')).toBe(`${w}\\foo\\bar`);
 
-          assert.equal(win32.join(v, '\\foo', 'bar\\\\\\'), `${w}\\foo\\bar\\`);
-          assert.equal(win32.join(v, '/foo', 'bar///'), `${w}\\foo\\bar\\`);
-          assert.equal(win32.join(v, '\\foo', 'bar', '///'), `${w}\\foo\\bar\\`);
-          assert.equal(win32.join(v, '/foo', 'bar', '///'), `${w}\\foo\\bar\\`);
-          assert.equal(win32.join(v, '\\foo', 'bar'), `${w}\\foo\\bar`);
-          assert.equal(win32.join(v, '/foo', 'bar'), `${w}\\foo\\bar`);
-          assert.equal(win32.join(v, '\\foo', 'bar', 'baz', '..'), `${w}\\foo\\bar`);
-          assert.equal(win32.join(v, '/foo', 'bar', 'baz', '..'), `${w}\\foo\\bar`);
+          expect(win32.join(v, '\\foo', 'bar\\\\\\')).toBe(`${w}\\foo\\bar\\`);
+          expect(win32.join(v, '/foo', 'bar///')).toBe(`${w}\\foo\\bar\\`);
+          expect(win32.join(v, '\\foo', 'bar', '///')).toBe(`${w}\\foo\\bar\\`);
+          expect(win32.join(v, '/foo', 'bar', '///')).toBe(`${w}\\foo\\bar\\`);
+          expect(win32.join(v, '\\foo', 'bar')).toBe(`${w}\\foo\\bar`);
+          expect(win32.join(v, '/foo', 'bar')).toBe(`${w}\\foo\\bar`);
+          expect(win32.join(v, '\\foo', 'bar', 'baz', '..')).toBe(`${w}\\foo\\bar`);
+          expect(win32.join(v, '/foo', 'bar', 'baz', '..')).toBe(`${w}\\foo\\bar`);
         });
       });
 
       it('should return a relative path', () => {
         ['', 'C:', 'c:'].forEach((v) => {
           const w = v.replace(/\//g, '\\');
-          assert.equal(win32.join(`${v}foo`, '\\bar\\\\\\'), `${w}foo\\bar\\`);
-          assert.equal(win32.join(`${v}foo`, '/bar///'), `${w}foo\\bar\\`);
-          assert.equal(win32.join(`${v}foo`, '\\bar', '\\\\\\'), `${w}foo\\bar\\`);
-          assert.equal(win32.join(`${v}foo`, '/bar', '///'), `${w}foo\\bar\\`);
-          assert.equal(win32.join(`${v}foo`, '\\bar'), `${w}foo\\bar`);
-          assert.equal(win32.join(`${v}foo`, '/bar'), `${w}foo\\bar`);
-          assert.equal(win32.join(`${v}foo`, '\\bar', 'baz', '..'), `${w}foo\\bar`);
-          assert.equal(win32.join(`${v}foo`, '/bar', 'baz', '..'), `${w}foo\\bar`);
+          expect(win32.join(`${v}foo`, '\\bar\\\\\\')).toBe(`${w}foo\\bar\\`);
+          expect(win32.join(`${v}foo`, '/bar///')).toBe(`${w}foo\\bar\\`);
+          expect(win32.join(`${v}foo`, '\\bar', '\\\\\\')).toBe(`${w}foo\\bar\\`);
+          expect(win32.join(`${v}foo`, '/bar', '///')).toBe(`${w}foo\\bar\\`);
+          expect(win32.join(`${v}foo`, '\\bar')).toBe(`${w}foo\\bar`);
+          expect(win32.join(`${v}foo`, '/bar')).toBe(`${w}foo\\bar`);
+          expect(win32.join(`${v}foo`, '\\bar', 'baz', '..')).toBe(`${w}foo\\bar`);
+          expect(win32.join(`${v}foo`, '/bar', 'baz', '..')).toBe(`${w}foo\\bar`);
 
-          assert.equal(win32.join(`${v}..`, 'foo', '..', '\\bar\\\\\\'), `${w}..\\bar\\`);
-          assert.equal(win32.join(`${v}..`, 'foo', '..', '/bar///'), `${w}..\\bar\\`);
-          assert.equal(win32.join(`${v}..`, 'foo', '..', '\\bar', '\\\\\\'), `${w}..\\bar\\`);
-          assert.equal(win32.join(`${v}..`, 'foo', '..', '/bar', '///'), `${w}..\\bar\\`);
-          assert.equal(win32.join(`${v}..`, 'foo', '..', '\\bar'), `${w}..\\bar`);
-          assert.equal(win32.join(`${v}..`, 'foo', '..', '/bar'), `${w}..\\bar`);
-          assert.equal(win32.join(`${v}..`, 'foo', '..', '\\bar', 'baz', '..'), `${w}..\\bar`);
-          assert.equal(win32.join(`${v}..`, 'foo', '..', '/bar', 'baz', '..'), `${w}..\\bar`);
+          expect(win32.join(`${v}..`, 'foo', '..', '\\bar\\\\\\')).toBe(`${w}..\\bar\\`);
+          expect(win32.join(`${v}..`, 'foo', '..', '/bar///')).toBe(`${w}..\\bar\\`);
+          expect(win32.join(`${v}..`, 'foo', '..', '\\bar', '\\\\\\')).toBe(`${w}..\\bar\\`);
+          expect(win32.join(`${v}..`, 'foo', '..', '/bar', '///')).toBe(`${w}..\\bar\\`);
+          expect(win32.join(`${v}..`, 'foo', '..', '\\bar')).toBe(`${w}..\\bar`);
+          expect(win32.join(`${v}..`, 'foo', '..', '/bar')).toBe(`${w}..\\bar`);
+          expect(win32.join(`${v}..`, 'foo', '..', '\\bar', 'baz', '..')).toBe(`${w}..\\bar`);
+          expect(win32.join(`${v}..`, 'foo', '..', '/bar', 'baz', '..')).toBe(`${w}..\\bar`);
         });
       });
     });
 
     describe('.parse()', () => {
       it('should throw TypeError', () => {
-        assert.throws(() => win32.parse(true), TypeError);
-        assert.throws(() => win32.parse(0), TypeError);
-        assert.throws(() => win32.parse({}), TypeError);
+        expect(() => win32.parse(true)).toThrow(TypeError);
+        expect(() => win32.parse(0)).toThrow(TypeError);
+        expect(() => win32.parse({})).toThrow(TypeError);
       });
 
       it('should return an object of an absolute path', () => {
@@ -773,12 +772,12 @@ describe('path', () => {
               },
             },
           ].forEach((tt) => {
-            assert.deepEqual(win32.parse(tt.path), tt.obj);
+            expect(win32.parse(tt.path)).toEqual(tt.obj);
 
             const obj = { ...tt.obj };
             obj.root = obj.root.replace(/\\/g, '/');
             obj.dir = obj.dir.replace(/\\/g, '/');
-            assert.deepEqual(win32.parse(tt.path.replace(/\\/g, '/')), obj);
+            expect(win32.parse(tt.path.replace(/\\/g, '/'))).toEqual(obj);
           });
         });
       });
@@ -898,31 +897,31 @@ describe('path', () => {
             },
           },
         ].forEach((tt) => {
-          assert.deepEqual(win32.parse(tt.path), tt.obj);
+          expect(win32.parse(tt.path)).toEqual(tt.obj);
 
           const obj = { ...tt.obj };
           obj.root = obj.root.replace(/\\/g, '/');
           obj.dir = obj.dir.replace(/\\/g, '/');
-          assert.deepEqual(win32.parse(tt.path.replace(/\\/g, '/')), obj);
+          expect(win32.parse(tt.path.replace(/\\/g, '/'))).toEqual(obj);
         });
       });
     });
 
     describe('.posix', () => {
       it('is path.posix', () => {
-        assert.equal(win32.posix, path.posix);
+        expect(win32.posix).toBe(path.posix);
       });
     });
 
     describe('.sep', () => {
       it('is "\\"', () => {
-        assert.equal(win32.sep, '\\');
+        expect(win32.sep).toBe('\\');
       });
     });
 
     describe('.win32', () => {
       it('is path.win32', () => {
-        assert.equal(win32.win32, path.win32);
+        expect(win32.win32).toBe(path.win32);
       });
     });
   });
