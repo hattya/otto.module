@@ -9,28 +9,32 @@ var title = 'Aster ☆ ' + path.basename(os.getwd());
 
 aster.title(title);
 aster.ignore.push(/^testdata$/);
-aster.ignore.push(/^(\.nyc_output|coverage|node_modules)$/);
+aster.ignore.push(/^(coverage|node_modules)$/);
 
 // js
 aster.watch(/.+\.js$/, function(files) {
-  if (!os.stat('node_modules')) {
-    if (npm.install()) return;
+  try {
+    if (!os.stat('node_modules')) {
+      if (npm.install()) return;
+    }
+    if (npm.run('cover')) return;
+    if (npm.run('lint')) return;
+  } finally {
+    aster.title(title);
   }
-  if (npm.run('cover')) return;
-  if (npm.run('lint')) return;
   if (files.some(function(e) { return e.lastIndexOf('lib', 0) === 0; })) {
-    if (go.get('-v', './...')) return;
     if (go.generate('./...')) return;
   }
 });
 
-aster.watch(/.+\.json$/, function(files) {
+aster.watch(/^package\.json$/, function(files) {
   npm.install();
+  aster.title(title);
 });
 
 // go
 aster.watch(/.+\.go$/, function(files) {
-  if (files.some(function(e) { return /[/\\]modulizer.go$/.test(e); })) {
+  if (files.some(function(e) { return path.basename(e) === 'modulizer.go'; })) {
     if (go.generate('./...')) return;
   }
   // go test for each package
