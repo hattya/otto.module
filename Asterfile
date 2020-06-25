@@ -23,6 +23,7 @@ aster.watch(/.+\.js$/, function(files) {
     aster.title(title);
   }
   if (files.some(function(e) { return e.lastIndexOf('lib', 0) === 0; })) {
+    if (go.install('./cmd/...')) return;
     if (go.generate('./...')) return;
   }
 });
@@ -34,7 +35,8 @@ aster.watch(/^package\.json$/, function(files) {
 
 // go
 aster.watch(/.+\.go$/, function(files) {
-  if (files.some(function(e) { return path.basename(e) === 'modulizer.go'; })) {
+  if (files.some(function(e) { return e.lastIndexOf('cmd', 0) == 0; })) {
+    if (go.install('./cmd/...')) return;
     if (go.generate('./...')) return;
   }
   // go test for each package
