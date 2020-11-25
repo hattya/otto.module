@@ -192,11 +192,11 @@ func isPath(id string) bool {
 	case id == "":
 	case id[0] == '/':
 		return true
-	case id[0] == '.' && 1 < len(id):
+	case id[0] == '.' && len(id) > 1:
 		switch {
 		case id[1] == '/':
 			return true
-		case id[1] == '.' && 2 < len(id):
+		case id[1] == '.' && len(id) > 2:
 			return id[2] == '/'
 		}
 	}
