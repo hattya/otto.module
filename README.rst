@@ -3,6 +3,9 @@ otto.module
 
 An implementation of the `Node.js module loading system`_ for otto_.
 
+.. image:: https://github.com/hattya/otto.module/workflows/CI/badge.svg
+   :target: https://github.com/hattya/otto.module/actions?query=workflow:CI
+
 .. image:: https://semaphoreci.com/api/v1/hattya/otto-module/branches/master/badge.svg
    :target: https://semaphoreci.com/hattya/otto-module
 
