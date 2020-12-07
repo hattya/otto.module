@@ -5,7 +5,7 @@ An implementation of the [Node.js module loading system](https://nodejs.org/api/
 [![pkg.go.dev](https://pkg.go.dev/badge/github.com/hattya/otto.module)](https://pkg.go.dev/github.com/hattya/otto.module)
 [![GitHub Actions](https://github.com/hattya/otto.module/workflows/CI/badge.svg)](https://github.com/hattya/otto.module/actions?query=workflow:CI)
 [![Semaphore](https://semaphoreci.com/api/v1/hattya/otto-module/branches/master/badge.svg)](https://semaphoreci.com/hattya/otto-module)
-[![Appveyor](https://ci.appveyor.com/api/projects/status/2uan2alkj5c6xe0r?svg=true)](https://ci.appveyor.com/project/hattya/otto-module)
+[![Appveyor](https://ci.appveyor.com/api/projects/status/2uan2alkj5c6xe0r/branch/master?svg=true)](https://ci.appveyor.com/project/hattya/otto-module)
 [![Codecov](https://codecov.io/gh/hattya/otto.module/branch/master/graph/badge.svg)](https://codecov.io/gh/hattya/otto.module)
 
 
