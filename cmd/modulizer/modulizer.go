@@ -55,6 +55,14 @@ func main() {
 	}
 }
 
+func exit(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v: %v\n", os.Args[0], err)
+		os.Exit(1)
+	}
+	os.Exit(0)
+}
+
 func gen(root string) error {
 	e := errModule(pkg)
 	l := loader(*flagL)
@@ -114,14 +122,6 @@ func gen(root string) error {
 	}
 	// save
 	return ioutil.WriteFile(*flagO, b, 0666)
-}
-
-func exit(err error) {
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v: %v", os.Args[0], err)
-		os.Exit(1)
-	}
-	os.Exit(0)
 }
 
 func errModule(pkg *build.Package) string {
