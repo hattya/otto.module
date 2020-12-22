@@ -34,7 +34,7 @@ var importPath string
 func init() {
 	out, err := exec.Command("go", "list", "-f", "{{.ImportPath}}\t{{.Name}}").CombinedOutput()
 	if err != nil {
-		panic(string(bytes.TrimSpace(out)))
+		exit(fmt.Errorf(string(bytes.TrimSpace(out))))
 	}
 	v := bytes.Fields(out)
 	importPath = string(v[0])
@@ -55,7 +55,7 @@ func main() {
 
 func exit(err error) {
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v: %v\n", os.Args[0], err)
+		fmt.Fprintln(os.Stderr, "modulizer:", err)
 		os.Exit(1)
 	}
 	os.Exit(0)
