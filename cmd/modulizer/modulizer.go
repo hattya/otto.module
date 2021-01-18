@@ -1,7 +1,7 @@
 //
 // otto.module/cmd/modulizer :: modulizer.go
 //
-//   Copyright (c) 2017-2020 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2021 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -134,7 +134,7 @@ func (*{{.Loader}}) Resolve(id, _ string) (string, error) {
 		return err
 	}
 	// save
-	return ioutil.WriteFile(*flagO, b, 0666)
+	return ioutil.WriteFile(*flagO, b, 0o666)
 }
 
 func errModule() string {
