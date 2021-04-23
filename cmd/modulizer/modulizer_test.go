@@ -74,5 +74,5 @@ func mkdir(s ...string) error {
 }
 
 func tempDir() (string, error) {
-	return ioutil.TempDir("", "modulizer.test")
+	return ioutil.TempDir("", "modulizer")
 }

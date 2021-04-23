@@ -139,10 +139,10 @@ func (*{{.Loader}}) Resolve(id, _ string) (string, error) {
 
 func errModule() string {
 	s := "ErrModule"
-	if importPath != module {
-		s = "module." + s
+	if importPath == module {
+		return s
 	}
-	return s
+	return "module." + s
 }
 
 func loader(s string) string {
