@@ -3,5 +3,6 @@
 *.out
 *.sw?
 *.test
+cmd/modulizer/modulizer
 coverage/
 node_modules/
