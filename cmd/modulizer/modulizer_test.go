@@ -16,12 +16,7 @@ import (
 )
 
 func TestGenerate(t *testing.T) {
-	dir, err := tempDir()
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(dir)
-
+	dir := t.TempDir()
 	root := filepath.Join(dir, "root")
 	if err := mkdir(root); err != nil {
 		t.Fatal(err)
@@ -45,11 +40,7 @@ func TestGenerate(t *testing.T) {
 }
 
 func TestError(t *testing.T) {
-	dir, err := tempDir()
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	// not exist
 	root := filepath.Join(dir, "root")
@@ -71,8 +62,4 @@ func TestError(t *testing.T) {
 
 func mkdir(s ...string) error {
 	return os.MkdirAll(filepath.Join(s...), 0o777)
-}
-
-func tempDir() (string, error) {
-	return ioutil.TempDir("", "modulizer")
 }
