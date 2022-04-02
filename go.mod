@@ -1,6 +1,6 @@
 module github.com/hattya/otto.module
 
-go 1.15
+go 1.16
 
 require (
 	github.com/robertkrimen/otto v0.0.0-20210614181706-373ff5438452

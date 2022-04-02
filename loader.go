@@ -1,7 +1,7 @@
 //
 // otto.module :: loader.go
 //
-//   Copyright (c) 2017-2020 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2022 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -12,7 +12,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -95,7 +94,7 @@ func (l *FileLoader) Load(id string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ioutil.ReadFile(id)
+	return os.ReadFile(id)
 }
 
 func (l *FileLoader) Resolve(id, wd string) (string, error) {
@@ -139,7 +138,7 @@ func (l *FolderLoader) Load(id string) ([]byte, error) {
 			return nil, err
 		}
 	}
-	return ioutil.ReadFile(id)
+	return os.ReadFile(id)
 }
 
 func (l *FolderLoader) Resolve(id, wd string) (string, error) {
@@ -153,7 +152,7 @@ func (l *FolderLoader) Resolve(id, wd string) (string, error) {
 	}
 
 	p := filepath.Join(wd, "package.json")
-	if b, err := ioutil.ReadFile(p); err == nil {
+	if b, err := os.ReadFile(p); err == nil {
 		var pkg Package
 		if err := json.Unmarshal(b, &pkg); err != nil {
 			return "", PackageError{
@@ -219,7 +218,7 @@ func (l *NodeModulesLoader) Load(id string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ioutil.ReadFile(id)
+	return os.ReadFile(id)
 }
 
 func (l *NodeModulesLoader) Resolve(id, wd string) (string, error) {

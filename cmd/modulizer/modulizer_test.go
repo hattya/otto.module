@@ -1,7 +1,7 @@
 //
 // otto.module/cmd/modulizer :: modulizer_test.go
 //
-//   Copyright (c) 2017-2021 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2022 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -9,7 +9,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -21,7 +20,7 @@ func TestGenerate(t *testing.T) {
 	if err := mkdir(root); err != nil {
 		t.Fatal(err)
 	}
-	if err := ioutil.WriteFile(filepath.Join(root, "go.js"), nil, 0o666); err != nil {
+	if err := os.WriteFile(filepath.Join(root, "go.js"), nil, 0o666); err != nil {
 		t.Fatal(err)
 	}
 
@@ -51,7 +50,7 @@ func TestError(t *testing.T) {
 	if err := mkdir(root); err != nil {
 		t.Fatal(err)
 	}
-	if err := ioutil.WriteFile(filepath.Join(root, "go.js"), []byte{0}, 0o666); err != nil {
+	if err := os.WriteFile(filepath.Join(root, "go.js"), []byte{0}, 0o666); err != nil {
 		t.Fatal(err)
 	}
 	*flagO = filepath.Join(dir, "out.go")

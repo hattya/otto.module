@@ -1,7 +1,7 @@
 //
 // otto.module/cmd/modulizer :: modulizer.go
 //
-//   Copyright (c) 2017-2021 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2022 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -13,7 +13,6 @@ import (
 	"flag"
 	"fmt"
 	"go/format"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -116,7 +115,7 @@ func (*{{.Loader}}) Resolve(id, _ string) (string, error) {
 		}
 		switch filepath.Ext(path) {
 		case ".js", ".json":
-			b, err := ioutil.ReadFile(path)
+			b, err := os.ReadFile(path)
 			if err != nil {
 				return err
 			}
@@ -134,7 +133,7 @@ func (*{{.Loader}}) Resolve(id, _ string) (string, error) {
 		return err
 	}
 	// save
-	return ioutil.WriteFile(*flagO, b, 0o666)
+	return os.WriteFile(*flagO, b, 0o666)
 }
 
 func errModule() string {
