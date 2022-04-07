@@ -13,6 +13,7 @@ import (
 	"flag"
 	"fmt"
 	"go/format"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -109,8 +110,8 @@ func (*{{.Loader}}) Resolve(id, _ string) (string, error) {
 	}
 	// variable
 	fmt.Fprintf(buf, "var %v = map[string][]byte{\n", *flagV)
-	err = filepath.Walk(root, func(path string, fi os.FileInfo, err error) error {
-		if err != nil || fi.IsDir() {
+	err = filepath.WalkDir(root, func(path string, de fs.DirEntry, err error) error {
+		if err != nil || de.IsDir() {
 			return err
 		}
 		switch filepath.Ext(path) {
