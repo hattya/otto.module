@@ -1,7 +1,7 @@
 //
 // otto.module :: module_test.go
 //
-//   Copyright (c) 2017-2020 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2022 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -582,9 +582,7 @@ func TestEnv_Get(t *testing.T) {
 
 	k := "__OTTO_MODULE__"
 	fn := "process.env.__get__"
-	if err := os.Setenv(k, fn); err != nil {
-		t.Fatal(err)
-	}
+	t.Setenv(k, fn)
 
 	src := fmt.Sprintf(`%v(%q);`, fn, k)
 	if v, err := vm.Run(src); err != nil {
@@ -609,9 +607,7 @@ func TestEnv_Has(t *testing.T) {
 
 	k := "__OTTO_MODULE__"
 	fn := "process.env.__has__"
-	if err := os.Setenv(k, fn); err != nil {
-		t.Fatal(err)
-	}
+	t.Setenv(k, fn)
 
 	src := fmt.Sprintf(`%v(%q);`, fn, k)
 	if v, err := vm.Run(src); err != nil {
@@ -633,6 +629,7 @@ func TestEnv_Set(t *testing.T) {
 
 	k := "__OTTO_MODULE__"
 	fn := "process.env.__set__"
+	t.Setenv(k, "_")
 
 	src := fmt.Sprintf(`%v(%q, %q);`, fn, k, fn)
 	if _, err := vm.Run(src); err != nil {
