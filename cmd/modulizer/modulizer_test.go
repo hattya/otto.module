@@ -1,7 +1,7 @@
 //
 // otto.module/cmd/modulizer :: modulizer_test.go
 //
-//   Copyright (c) 2017-2022 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2023 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -25,11 +25,15 @@ func TestGenerate(t *testing.T) {
 	}
 
 	for _, tt := range []struct {
+		e bool
 		l string
 	}{
-		{""},
-		{"prefix"},
+		{false, ""},
+		{false, "prefix"},
+		{true, ""},
+		{true, "prefix"},
 	} {
+		*flagE = tt.e
 		*flagL = tt.l
 		*flagO = filepath.Join(dir, "out.go")
 		if err := gen(root); err != nil {
@@ -40,6 +44,9 @@ func TestGenerate(t *testing.T) {
 
 func TestError(t *testing.T) {
 	dir := t.TempDir()
+	*flagE = false
+	*flagL = ""
+	*flagO = ""
 
 	// not exist
 	root := filepath.Join(dir, "root")
