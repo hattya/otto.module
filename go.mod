@@ -2,7 +2,7 @@ module github.com/hattya/otto.module
 
 go 1.19
 
-require github.com/robertkrimen/otto v0.2.1
+require github.com/robertkrimen/otto v0.3.0
 
 require (
 	golang.org/x/text v0.4.0 // indirect

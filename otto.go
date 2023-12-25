@@ -1,7 +1,7 @@
 //
 // otto.module :: otto.go
 //
-//   Copyright (c) 2017-2020 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2023 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -20,7 +20,7 @@ func Throw(vm *otto.Otto, err error) otto.Value {
 	switch err := err.(type) {
 	case *otto.Error:
 		panic(err)
-	case parser.ErrorList:
+	case *parser.ErrorList:
 		panic(vm.MakeSyntaxError(OttoError{Err: err}.Error()))
 	case ModuleError:
 		if err, ok := err.Err.(PackageError); ok {
@@ -33,7 +33,7 @@ func Throw(vm *otto.Otto, err error) otto.Value {
 func Wrap(err error) error {
 	switch err.(type) {
 	case *otto.Error:
-	case parser.ErrorList:
+	case *parser.ErrorList:
 	default:
 		return err
 	}
@@ -48,16 +48,16 @@ func (e OttoError) Error() string {
 	switch err := e.Err.(type) {
 	case *otto.Error:
 		return strings.TrimSpace(err.String())
-	case parser.ErrorList:
-		name := err[0].Position.Filename
-		if name == "" {
-			name = "<anonymous>"
+	case *parser.ErrorList:
+		err1 := (*err)[0]
+		if err1.Position.Filename == "" {
+			err1.Position.Filename = "<anonymous>"
 		}
-		s := fmt.Sprintf("%v:%v:%v: %v", name, err[0].Position.Line, err[0].Position.Column, err[0].Message)
-		if len(err) == 1 {
+		s := fmt.Sprintf("%v:%v:%v: %v", err1.Position.Filename, err1.Position.Line, err1.Position.Column, err1.Message)
+		if len(*err) == 1 {
 			return s
 		}
-		return fmt.Sprintf("%v (and %v more errors)", s, len(err)-1)
+		return fmt.Sprintf("%v (and %v more errors)", s, len(*err)-1)
 	}
 	return e.Err.Error()
 }
