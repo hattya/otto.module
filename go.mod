@@ -1,8 +1,8 @@
 module github.com/hattya/otto.module
 
-go 1.21
+go 1.22
 
-require github.com/robertkrimen/otto v0.4.0
+require github.com/robertkrimen/otto v0.5.1
 
 require (
 	golang.org/x/text v0.4.0 // indirect

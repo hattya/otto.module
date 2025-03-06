@@ -11,7 +11,7 @@ An implementation of the [Node.js module loading system](https://nodejs.org/api/
 ## Installation
 
 ```console
-$ go get -u github.com/hattya/otto.module
+$ go get github.com/hattya/otto.module
 ```
 
 
