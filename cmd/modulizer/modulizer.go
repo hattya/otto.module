@@ -1,7 +1,7 @@
 //
 // otto.module/cmd/modulizer :: modulizer.go
 //
-//   Copyright (c) 2017-2023 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2025 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -126,7 +126,7 @@ func (*{{.Loader}}) Resolve(id, _ string) (string, error) {
 }
 
 `))
-	err := t.Execute(buf, map[string]interface{}{
+	err := t.Execute(buf, map[string]any{
 		"Args":       strings.Join(os.Args[1:], " "),
 		"Module":     module,
 		"Name":       *flagP,
