@@ -1,7 +1,7 @@
 //
 // otto.module :: module_test.go
 //
-//   Copyright (c) 2017-2022 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2026 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -11,6 +11,7 @@ package module_test
 import (
 	"errors"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
@@ -685,15 +686,11 @@ var files map[string][]byte
 
 func init() {
 	files = make(map[string][]byte)
-	for k, v := range module.Files {
-		files[k] = v
-	}
+	maps.Copy(files, module.Files)
 }
 
 func restore() {
-	for k, v := range files {
-		module.Files[k] = v
-	}
+	maps.Copy(module.Files, files)
 }
 
 func abs(name string) string {

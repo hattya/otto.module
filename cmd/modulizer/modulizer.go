@@ -1,7 +1,7 @@
 //
 // otto.module/cmd/modulizer :: modulizer.go
 //
-//   Copyright (c) 2017-2025 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2026 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
@@ -10,6 +10,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"go/format"
@@ -36,7 +37,7 @@ var importPath string
 func init() {
 	out, err := exec.Command("go", "list", "-f", "{{.ImportPath}}\t{{.Name}}").CombinedOutput()
 	if err != nil {
-		exit(fmt.Errorf(string(bytes.TrimSpace(out))))
+		exit(errors.New(string(bytes.TrimSpace(out))))
 	}
 	v := bytes.Fields(out)
 	importPath = string(v[0])
@@ -196,5 +197,5 @@ func loader(s string) string {
 
 func sanitize(b []byte) []byte {
 	// replace ` with `+"`"+`
-	return bytes.Replace(b, []byte("`"), []byte("`+\"`\"+`"), -1)
+	return bytes.ReplaceAll(b, []byte("`"), []byte("`+\"`\"+`"))
 }

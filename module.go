@@ -1,12 +1,12 @@
 //
 // otto.module :: module.go
 //
-//   Copyright (c) 2017-2020 Akinori Hattori <hattya@gmail.com>
+//   Copyright (c) 2017-2026 Akinori Hattori <hattya@gmail.com>
 //
 //   SPDX-License-Identifier: MIT
 //
 
-//go:generate modulizer -l core -o core.go lib
+//go:generate go run ./cmd/modulizer -l core -o core.go lib
 
 package module
 
