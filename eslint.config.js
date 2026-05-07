@@ -1,6 +1,6 @@
 const { defineConfig } = require('eslint/config');
 const js = require('@eslint/js');
-const globals = require('globals');
+const jest = require('eslint-plugin-jest');
 const { FlatCompat } = require('@eslint/eslintrc');
 
 const compat = new FlatCompat({
@@ -48,8 +48,13 @@ module.exports = defineConfig([{
     'import/no-extraneous-dependencies': 'off',
   },
 }, {
-  files: ['test/**/*.js'],
-  languageOptions: {
-    globals: { ...globals.jest },
+  files: ['test/**/*.spec.js'],
+  plugins: {
+    jest: jest,
   },
+  languageOptions: {
+    globals: jest.environments.globals.globals,
+  },
+  ...jest.configs['flat/recommended'],
+  ...jest.configs['flat/style'],
 }]);
