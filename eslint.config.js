@@ -30,6 +30,9 @@ module.exports = defineConfig([{
 
     // Stylistic Issues
     'max-len': 'off',
+    'new-cap': ['error', {
+      'newIsCapExceptions': ['constructor'],
+    }],
     'no-mixed-operators': 'off',
     'no-multi-assign': 'off',
     'no-plusplus': 'off',
